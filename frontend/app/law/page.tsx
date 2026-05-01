@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8001";
+
 type OptionsResponse = {
   regions: string[];
   industries: string[];
@@ -99,7 +101,7 @@ export default function LawPage() {
     const fetchOptions = async () => {
       try {
         setOptionsLoading(true);
-        const res = await fetch("http://127.0.0.1:8001/options");
+        const res = await fetch(`${BACKEND_URL}/options`);
 
         if (!res.ok) {
           throw new Error("옵션 데이터를 불러오지 못했습니다.");
@@ -158,7 +160,7 @@ export default function LawPage() {
         return;
       }
 
-      const res = await fetch("http://127.0.0.1:8001/chat/law/message", {
+      const res = await fetch(`${BACKEND_URL}/chat/law/message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

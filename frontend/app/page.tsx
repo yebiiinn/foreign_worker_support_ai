@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8001";
+
 type Category = "law" | "training";
 
 type AskResponse = {
@@ -152,7 +154,7 @@ export default function HomePage() {
     const fetchOptions = async () => {
       try {
         setOptionsLoading(true);
-        const response = await fetch("http://127.0.0.1:8001/options");
+        const response = await fetch(`${BACKEND_URL}/options`);
 
         if (!response.ok) {
           throw new Error("옵션 데이터를 불러오지 못했습니다.");
@@ -259,7 +261,7 @@ export default function HomePage() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://127.0.0.1:8001/chat/law/message", {
+      const response = await fetch(`${BACKEND_URL}/chat/law/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -305,7 +307,7 @@ export default function HomePage() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://127.0.0.1:8001/chat/law/message", {
+      const response = await fetch(`${BACKEND_URL}/chat/law/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -352,7 +354,7 @@ export default function HomePage() {
       setTrainingError("");
       setTrainingSubmitted(true);
 
-      const response = await fetch("http://127.0.0.1:8001/chat/training/message", {
+      const response = await fetch(`${BACKEND_URL}/chat/training/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

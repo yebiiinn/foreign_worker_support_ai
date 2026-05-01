@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef,useState } from "react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8001";
+
 type TrainingRecommendation = {
   course_name: string;
   start_date: string;
@@ -26,7 +28,7 @@ export default function TrainingPage() {
     const fetchOptions = async () => {
       try {
         setOptionsLoading(true);
-        const res = await fetch("http://127.0.0.1:8001/options");
+        const res = await fetch(`${BACKEND_URL}/options`);
         const data = await res.json();
 
         const nextIndustries = data.industries || [];
@@ -67,7 +69,7 @@ export default function TrainingPage() {
         return;
       }
 
-      const res = await fetch("http://127.0.0.1:8001/chat/training/message", {
+      const res = await fetch(`${BACKEND_URL}/chat/training/message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
