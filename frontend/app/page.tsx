@@ -531,19 +531,20 @@ export default function HomePage() {
                         height: 0,
                         borderTop: "9px solid transparent",
                         borderBottom: "9px solid transparent",
-                        borderRight: "11px solid #dbeafe",
+                        borderRight: "11px solid #bae6fd",
                       }}
                     />
                     {/* 말풍선 본체 */}
                     <div
                       style={{
-                        background: "#dbeafe",
+                        background: "#ffffff",
+                        border: "1.5px solid #bae6fd",
                         borderRadius: "14px",
                         padding: "8px 15px",
                         whiteSpace: "nowrap",
                       }}
                     >
-                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#1d4ed8" }}>
+                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#0369a1" }}>
                         저를 눌러보세요!
                       </span>
                     </div>
