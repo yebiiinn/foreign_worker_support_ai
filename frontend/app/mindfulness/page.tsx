@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useLang } from "../context/LanguageContext";
+import { T } from "../i18n/translations";
 
 type SurveyQuestion = {
   id: number;
@@ -134,6 +136,13 @@ function saveConversation(record: ConversationRecord): void {
 }
 
 export default function MindfulnessPage() {
+  const { lang } = useLang();
+  const tx = T[lang].mindfulness;
+  const txC = T[lang].common;
+
+  const SURVEY_QUESTIONS = tx.questions;
+  const SCALE_COUNT_DYN = SURVEY_QUESTIONS.filter((q) => q.type === "scale").length;
+
   const [pageState, setPageState] = useState<PageState>("greeting");
   const [surveyAnswers, setSurveyAnswers] = useState<SurveyAnswer[]>([]);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -178,7 +187,7 @@ export default function MindfulnessPage() {
   const answeredCount = SURVEY_QUESTIONS.filter(
     (q) => q.type === "scale" && surveyAnswers.some((a) => a.questionId === q.id),
   ).length;
-  const canSubmit = answeredCount === SCALE_COUNT;
+  const canSubmit = answeredCount === SCALE_COUNT_DYN;
 
   const handleStartSurvey = () => {
     setConversationId(`conv_${Date.now()}`);
@@ -212,7 +221,7 @@ export default function MindfulnessPage() {
       const res = await fetch("/api/mindfulness", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "initial", surveyAnswers, questions: SURVEY_QUESTIONS }),
+        body: JSON.stringify({ type: "initial", surveyAnswers, questions: SURVEY_QUESTIONS, language: lang }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "상담 준비 중 오류가 발생했습니다.");
@@ -261,6 +270,7 @@ export default function MindfulnessPage() {
           messages: updated.map((m) => ({ role: m.role, content: m.content })),
           surveyAnswers,
           questions: SURVEY_QUESTIONS,
+          language: lang,
         }),
       });
       const data = await res.json();
@@ -319,17 +329,17 @@ export default function MindfulnessPage() {
         )}
 
         <div className="ms-speech-bubble">
-          안녕~ 오늘 하루는 어땠어? 😊
+          {tx.greetBubble1}
           <br />
           <span style={{ fontSize: "15px", fontWeight: 500, color: "#5a7a9a" }}>
-            힘들거나 외로운 마음이 있다면 라키에게 털어놓아봐
+            {tx.greetBubble2}
           </span>
         </div>
 
         <p className="ms-welcome-desc">
-          타지 생활, 힘든 일, 외로움... 혼자 담아두지 않아도 돼. 🌿
-          <br />
-          간단한 설문으로 요즘 마음 상태를 확인하고, 라키가 따뜻하게 상담해줄게.
+          {tx.greetDesc.split("\n").map((line, i) => (
+            <span key={i}>{line}{i === 0 && <br />}</span>
+          ))}
         </p>
 
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
@@ -338,23 +348,18 @@ export default function MindfulnessPage() {
             onClick={handleStartSurvey}
             style={{ fontSize: "16px", padding: "14px 28px", minWidth: "200px" }}
           >
-            💬 라키와 대화 시작하기
+            {tx.startBtn}
           </button>
           {hasHistory && (
             <button className="ghost-btn" onClick={() => setPageState("history")} style={{ minWidth: "160px" }}>
-              📋 이전 대화 기록 보기
+              {tx.historyBtn}
             </button>
           )}
         </div>
       </div>
 
       <div className="ms-feature-grid">
-        {[
-          { icon: "📝", title: "간단한 설문", desc: "10가지 질문으로 요즘 마음 상태를 파악해" },
-          { icon: "🤝", title: "라키의 공감 상담", desc: "설문 결과 기반으로 라키가 맞춤 상담을 해줘" },
-          { icon: "💬", title: "자유로운 대화", desc: "라키와 계속 채팅하면서 마음을 털어놔봐" },
-          { icon: "🗂️", title: "대화 기록 저장", desc: "이전 대화를 언제든 다시 확인할 수 있어" },
-        ].map((f) => (
+        {tx.features.map((f) => (
           <div key={f.title} className="ms-feature-card">
             <div style={{ fontSize: "28px", marginBottom: "10px" }}>{f.icon}</div>
             <h3 style={{ margin: "0 0 8px", fontSize: "14px", fontWeight: 800, color: "#1e3a5f" }}>{f.title}</h3>
@@ -370,14 +375,14 @@ export default function MindfulnessPage() {
     <div className="card ms-survey-card">
       <div className="ms-progress-row">
         <div className="ms-progress-bar">
-          <div className="ms-progress-fill" style={{ width: `${(answeredCount / SCALE_COUNT) * 100}%` }} />
+          <div className="ms-progress-fill" style={{ width: `${(answeredCount / SCALE_COUNT_DYN) * 100}%` }} />
         </div>
-        <span className="ms-progress-text">{answeredCount} / {SCALE_COUNT} 완료</span>
+        <span className="ms-progress-text">{tx.surveyProgress(answeredCount, SCALE_COUNT_DYN)}</span>
       </div>
 
       <div className="card-header">
-        <h2>요즘 마음은 어때? 🌱</h2>
-        <p>솔직하게 답해줘. 틀린 답은 없어 😊</p>
+        <h2>{tx.surveyTitle}</h2>
+        <p>{tx.surveySubtitle}</p>
       </div>
 
       <div className="ms-questions">
@@ -416,7 +421,7 @@ export default function MindfulnessPage() {
               <textarea
                 value={getText(q.id)}
                 onChange={(e) => handleTextAnswer(q.id, e.target.value)}
-                placeholder="마음속에 있는 이야기를 편하게 써줘..."
+                placeholder={tx.freeTextPlaceholder}
                 className="ms-free-textarea"
               />
             </div>
@@ -433,10 +438,10 @@ export default function MindfulnessPage() {
           disabled={!canSubmit}
           style={{ minWidth: "220px", fontSize: "16px", padding: "15px 28px" }}
         >
-          {canSubmit ? "💌 라키에게 전달하기" : `${SCALE_COUNT - answeredCount}개 더 답해줘`}
+          {tx.submitSurveyBtn(SCALE_COUNT_DYN - answeredCount)}
         </button>
         <button className="ghost-btn" onClick={() => setPageState("greeting")}>
-          뒤로가기
+          {txC.back}
         </button>
       </div>
     </div>
@@ -458,9 +463,9 @@ export default function MindfulnessPage() {
         />
       )}
       <p style={{ fontSize: "22px", fontWeight: 800, color: "#1e3a5f", margin: "0 0 8px" }}>
-        라키가 마음을 읽고 있어... ✨
+        {tx.analyzingTitle}
       </p>
-      <p style={{ color: "#6b8fb0", fontSize: "15px", margin: 0 }}>잠깐만 기다려줘 🌸</p>
+      <p style={{ color: "#6b8fb0", fontSize: "15px", margin: 0 }}>{tx.analyzingDesc}</p>
       <div className="ms-dots">
         <span /><span /><span />
       </div>
@@ -483,23 +488,23 @@ export default function MindfulnessPage() {
             }}
           />
         )}
-        <div style={{ fontSize: "16px", fontWeight: 800, color: "#1e3a5f" }}>라키</div>
-        <div style={{ fontSize: "12px", color: "#7a9ab5", fontWeight: 600 }}>마음 상담 친구</div>
-        {loading && <div className="ms-typing-label">답변 중 💬</div>}
+        <div style={{ fontSize: "16px", fontWeight: 800, color: "#1e3a5f" }}>{tx.sidebarName}</div>
+        <div style={{ fontSize: "12px", color: "#7a9ab5", fontWeight: 600 }}>{tx.sidebarRole}</div>
+        {loading && <div className="ms-typing-label">{tx.sidebarTyping}</div>}
         <div style={{ width: "100%", marginTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <button
             className="ghost-btn"
             style={{ fontSize: "13px", padding: "8px 10px", width: "100%" }}
             onClick={() => setPageState("history")}
           >
-            📋 대화 기록
+            {tx.historyBtn2}
           </button>
           <button
             className="ghost-btn"
             style={{ fontSize: "13px", padding: "8px 10px", width: "100%" }}
             onClick={handleStartSurvey}
           >
-            🔄 새 상담 시작
+            {tx.newChatBtn}
           </button>
         </div>
       </div>
@@ -546,7 +551,7 @@ export default function MindfulnessPage() {
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="라키에게 하고 싶은 말을 써줘... (Enter로 전송, Shift+Enter 줄바꿈)"
+            placeholder={tx.inputPlaceholder}
             className="ms-chat-textarea"
             disabled={loading}
           />
@@ -556,7 +561,7 @@ export default function MindfulnessPage() {
             disabled={loading || !inputMessage.trim()}
             style={{ minWidth: "70px", alignSelf: "flex-end" }}
           >
-            전송
+            {txC.send}
           </button>
         </div>
       </div>
@@ -567,16 +572,16 @@ export default function MindfulnessPage() {
   const renderHistory = () => (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "24px" }}>
-        <button className="ghost-btn" onClick={() => setPageState("greeting")}>← 돌아가기</button>
-        <h2 style={{ margin: 0, fontSize: "22px", fontWeight: 800 }}>이전 대화 기록 📋</h2>
+        <button className="ghost-btn" onClick={() => setPageState("greeting")}>{txC.back}</button>
+        <h2 style={{ margin: 0, fontSize: "22px", fontWeight: 800 }}>{tx.historyTitle}</h2>
       </div>
 
       {conversations.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "56px 20px" }}>
           <p style={{ fontSize: "40px", margin: "0 0 12px" }}>🌱</p>
-          <p style={{ color: "#6b8197", fontSize: "16px", margin: 0 }}>아직 저장된 대화 기록이 없어</p>
+          <p style={{ color: "#6b8197", fontSize: "16px", margin: 0 }}>{tx.historyEmpty}</p>
           <button className="primary-btn" onClick={handleStartSurvey} style={{ marginTop: "20px" }}>
-            첫 상담 시작하기
+            {tx.firstChatBtn}
           </button>
         </div>
       ) : (
@@ -598,14 +603,14 @@ export default function MindfulnessPage() {
                     style={{ fontSize: "13px", padding: "8px 14px" }}
                     onClick={() => handleContinueConversation(conv)}
                   >
-                    이어서 대화
+                    {tx.continueBtn}
                   </button>
                   <button
                     className="ghost-btn"
                     style={{ fontSize: "13px", padding: "8px 14px" }}
                     onClick={() => setExpandedConvId(expandedConvId === conv.id ? null : conv.id)}
                   >
-                    {expandedConvId === conv.id ? "접기" : "보기"}
+                    {expandedConvId === conv.id ? tx.collapseBtn : tx.viewBtn}
                   </button>
                 </div>
               </div>
@@ -619,7 +624,7 @@ export default function MindfulnessPage() {
                         style={{ maxWidth: "85%" }}
                       >
                         <div style={{ fontSize: "11px", color: "#9bafc2", marginBottom: "4px", fontWeight: 600 }}>
-                          {msg.role === "user" ? "나" : "라키"}
+                          {msg.role === "user" ? tx.meLabel : tx.lakiLabel}
                         </div>
                         {msg.content}
                       </div>
@@ -642,15 +647,13 @@ export default function MindfulnessPage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
             <Link href="/" style={{ textDecoration: "none" }}>
               <span className="ghost-btn" style={{ display: "inline-block", fontSize: "13px", padding: "6px 12px", cursor: "pointer" }}>
-                ← 홈으로
+                {txC.backHome}
               </span>
             </Link>
-            <div className="hero-badge" style={{ margin: 0 }}>마음 챙기기 서비스</div>
+            <div className="hero-badge" style={{ margin: 0 }}>{tx.badge}</div>
           </div>
-          <h1 className="hero-title">라키와 마음 나누기 🌿</h1>
-          <p className="hero-desc">
-            타지 생활의 어려움, 외로움, 스트레스... 라키가 곁에서 들어줄게요.
-          </p>
+          <h1 className="hero-title">{tx.title}</h1>
+          <p className="hero-desc">{tx.desc}</p>
         </section>
 
         {pageState === "greeting" && renderGreeting()}

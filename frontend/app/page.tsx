@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useLang } from "./context/LanguageContext";
+import { T } from "./i18n/translations";
 
 type Category = "law" | "training";
 
@@ -117,6 +119,9 @@ const pickLakiByKeywords = (paths: string[], keywords: string[], fallbackIndex =
 };
 
 export default function HomePage() {
+  const { lang, setLang } = useLang();
+  const tx = T[lang].home;
+
   const [category, setCategory] = useState<Category>("law");
 
   const [regions, setRegions] = useState<string[]>([]);
@@ -395,17 +400,41 @@ export default function HomePage() {
         <div className="home-glow home-glow-br" />
 
         <div className="home-hero-content">
-          <div className="hero-badge">외국인 근로자 지원 서비스</div>
+          {/* 언어 토글 */}
+          <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+            {(["ko", "en"] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  padding: "5px 14px",
+                  borderRadius: "20px",
+                  border: lang === l ? "none" : "1px solid rgba(191,219,254,0.8)",
+                  background: lang === l ? "linear-gradient(135deg,#2563eb,#3b82f6)" : "rgba(255,255,255,0.7)",
+                  color: lang === l ? "#fff" : "#64748b",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  boxShadow: lang === l ? "0 2px 10px rgba(37,99,235,0.3)" : "none",
+                }}
+              >
+                {l === "ko" ? "한국어" : "English"}
+              </button>
+            ))}
+          </div>
+
+          <div className="hero-badge">{tx.badge}</div>
 
           <h1
             className="hero-title"
             style={{ fontSize: "56px", fontWeight: 800, margin: "16px 0 0", textAlign: "center" }}
           >
-            외국인 고용·근로 통합 AI 서비스
+            {tx.title}
           </h1>
 
           <p className="hero-desc" style={{ textAlign: "center", maxWidth: "760px", marginTop: "14px" }}>
-            법률 상담부터 직업훈련 추천, 마음 챙기기까지 — 외국인 근로자의 한국 생활 전반을 함께합니다.
+            {tx.desc}
           </p>
 
           {heroLaki && (
@@ -445,25 +474,9 @@ export default function HomePage() {
                   pointerEvents: "none",
                 }}
               >
-                {language === "vi" ? (
-                  <>
-                    <span>Mọi khoảnh khắc làm việc và sinh sống tại Hàn Quốc,</span>
-                    <br />
-                    <span>Laki sẽ đồng hành cùng bạn!</span>
-                  </>
-                ) : language === "en" ? (
-                  <>
-                    <span>For every moment of your work and life in Korea,</span>
-                    <br />
-                    <span>Laki is here to support you!</span>
-                  </>
-                ) : (
-                  <>
-                    <span>한국에서 일하고 생활하는 모든 순간,</span>
-                    <br />
-                    <span>라키가 함께 응원할게요!</span>
-                  </>
-                )}
+                <span>{tx.lakiGreet1}</span>
+                <br />
+                <span>{tx.lakiGreet2}</span>
                 <div
                   style={{
                     position: "absolute",
@@ -545,7 +558,7 @@ export default function HomePage() {
                       }}
                     >
                       <span style={{ fontSize: "13px", fontWeight: 700, color: "#0369a1" }}>
-                        저를 눌러보세요!
+                        {tx.lakiHint}
                       </span>
                     </div>
                   </div>
@@ -592,19 +605,21 @@ export default function HomePage() {
                 >
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "10px" }}>
                     <p style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: 800, color: "#1e40af" }}>
-                      노동 문제 해결의 열쇠, 라키
+                      {tx.lakiInfoTitle}
                     </p>
                     <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "#2563eb", letterSpacing: "0.08em" }}>
-                      Labor · AI · Key
+                      {tx.lakiInfoSub}
                     </p>
                   </div>
                   <p style={{ margin: "0 0 12px", fontSize: "14.5px", color: "#475569", lineHeight: 1.65, fontWeight: 400 }}>
-                    세계 각국에서 한국으로 온 외국인 근로자들이 언어와 제도의 벽 없이<br />안전하게 일할 수 있도록 만들어진 AI 노동 도우미예요.
+                    {tx.lakiInfoDesc.split("\n").map((line, i) => (
+                      <span key={i}>{line}{i === 0 && <br />}</span>
+                    ))}
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "14px", justifyContent: "center" }}>
-                    {["한국어", "English", "Tiếng Việt", "中文", "ภาษาไทย", "O'zbekcha"].map((lang) => (
+                    {["한국어", "English", "Tiếng Việt", "中文", "ภาษาไทย", "O'zbekcha"].map((l) => (
                       <span
-                        key={lang}
+                        key={l}
                         style={{
                           fontSize: "11px",
                           fontWeight: 600,
@@ -615,15 +630,15 @@ export default function HomePage() {
                           padding: "2px 9px",
                         }}
                       >
-                        {lang}
+                        {l}
                       </span>
                     ))}
                   </div>
                   <div style={{ borderTop: "1px solid rgba(191, 219, 254, 0.6)", paddingTop: "14px", display: "flex", gap: "10px" }}>
                     {[
-                      ["법률 상담", "부당한 처우·임금 체불·산재 등 노동 권리를 법령 근거로 안내해드려요."],
-                      ["직업훈련 추천", "업종과 관심사에 맞는 직업훈련 과정을 찾아 커리어를 키워드려요."],
-                      ["마음 챙기기", "낯선 환경의 외로움과 스트레스, 라키가 따뜻하게 들어드려요."],
+                      [tx.lawTag, tx.lawCardDesc],
+                      [tx.trainingTag, tx.trainingCardDesc],
+                      [tx.mindTag, tx.mindCardDesc],
                     ].map(([title, desc]) => (
                       <div
                         key={title}
@@ -641,7 +656,7 @@ export default function HomePage() {
                     ))}
                   </div>
                   <p style={{ margin: "10px 0 0", fontSize: "12px", color: "#94a3b8", textAlign: "right" }}>
-                    다시 누르면 닫혀요
+                    {tx.closeHint}
                   </p>
                 </div>
               </div>
@@ -651,7 +666,7 @@ export default function HomePage() {
 
         {/* 스크롤 유도 */}
         <div className="home-scroll-hint">
-          <span>서비스 보기</span>
+          <span>{tx.scrollHint}</span>
           <div className="home-scroll-arrow" />
         </div>
       </section>
@@ -660,56 +675,48 @@ export default function HomePage() {
       <section className="home-services-section">
         <div className="home-svc-inner">
           <div style={{ textAlign: "center", marginBottom: "52px" }}>
-            <div className="hero-badge">서비스 목록</div>
+            <div className="hero-badge">{tx.servicesBadge}</div>
             <h2 style={{ margin: "14px 0 12px", fontSize: "36px", fontWeight: 800, color: "#1e293b" }}>
-              라키와 함께하는 서비스
+              {tx.servicesTitle}
             </h2>
-            <p style={{ color: "#6f8094", fontSize: "16px", margin: 0 }}>원하는 서비스를 선택해 시작해보세요</p>
+            <p style={{ color: "#6f8094", fontSize: "16px", margin: 0 }}>{tx.servicesDesc}</p>
           </div>
 
           <div className="home-svc-grid">
             {/* 법률 상담 */}
             <Link href="/law" className="home-svc-card" style={{ textDecoration: "none" }}>
               <div className="home-svc-img-area home-svc-img-law">
-                <img src="/images/laki/full/laki-law.png" alt="법률 상담 라키" className="home-svc-laki" />
+                <img src="/images/laki/full/laki-law.png" alt="law laki" className="home-svc-laki" />
               </div>
               <div className="home-svc-body">
-                <span className="home-svc-tag home-svc-tag-law">법률 상담</span>
-                <h3 className="home-svc-title">외국인 노동자 법 설명</h3>
-                <p className="home-svc-desc">
-                  법령 근거를 바탕으로 외국인 근로자의 권리와 법률 문제를 쉽고 정확하게 알려드려요
-                </p>
-                <span className="home-svc-btn home-svc-btn-law">시작하기 →</span>
+                <span className="home-svc-tag home-svc-tag-law">{tx.lawTag}</span>
+                <h3 className="home-svc-title">{tx.lawTitle}</h3>
+                <p className="home-svc-desc">{tx.lawDesc}</p>
+                <span className="home-svc-btn home-svc-btn-law">{tx.lawBtn}</span>
               </div>
             </Link>
 
-            {/* 직업훈련 */}
             <Link href="/training" className="home-svc-card" style={{ textDecoration: "none" }}>
               <div className="home-svc-img-area home-svc-img-training">
-                <img src="/images/laki/full/laki-training.png" alt="직업훈련 라키" className="home-svc-laki home-svc-laki-training" />
+                <img src="/images/laki/full/laki-training.png" alt="training laki" className="home-svc-laki home-svc-laki-training" />
               </div>
               <div className="home-svc-body">
-                <span className="home-svc-tag home-svc-tag-training">직업훈련</span>
-                <h3 className="home-svc-title">직업훈련 추천</h3>
-                <p className="home-svc-desc">
-                  관심 분야와 업종을 입력하면 나에게 딱 맞는 직업훈련 과정을 추천해드려요
-                </p>
-                <span className="home-svc-btn home-svc-btn-training">시작하기 →</span>
+                <span className="home-svc-tag home-svc-tag-training">{tx.trainingTag}</span>
+                <h3 className="home-svc-title">{tx.trainingTitle}</h3>
+                <p className="home-svc-desc">{tx.trainingDesc}</p>
+                <span className="home-svc-btn home-svc-btn-training">{tx.trainingBtn}</span>
               </div>
             </Link>
 
-            {/* 마음 챙기기 */}
             <Link href="/mindfulness" className="home-svc-card" style={{ textDecoration: "none" }}>
               <div className="home-svc-img-area home-svc-img-mind">
-                <img src="/images/laki/full/laki-mind.png" alt="마음 챙기기 라키" className="home-svc-laki home-svc-laki-mind" />
+                <img src="/images/laki/full/laki-mind.png" alt="mindfulness laki" className="home-svc-laki home-svc-laki-mind" />
               </div>
               <div className="home-svc-body">
-                <span className="home-svc-tag home-svc-tag-mind">심리 상담</span>
-                <h3 className="home-svc-title">마음 챙기기</h3>
-                <p className="home-svc-desc">
-                  외로움, 스트레스, 고민... 라키와 함께 마음을 털어놓고 따뜻한 위로를 받아봐요
-                </p>
-                <span className="home-svc-btn home-svc-btn-mind">시작하기 →</span>
+                <span className="home-svc-tag home-svc-tag-mind">{tx.mindTag}</span>
+                <h3 className="home-svc-title">{tx.mindTitle}</h3>
+                <p className="home-svc-desc">{tx.mindDesc}</p>
+                <span className="home-svc-btn home-svc-btn-mind">{tx.mindBtn}</span>
               </div>
             </Link>
           </div>

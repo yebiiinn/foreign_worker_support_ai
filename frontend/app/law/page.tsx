@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useLang } from "../context/LanguageContext";
+import { T } from "../i18n/translations";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8001";
 
@@ -76,13 +78,17 @@ const SUPPORT_LINKS = [
 ];
 
 export default function LawPage() {
+  const { lang } = useLang();
+  const tx = T[lang].law;
+  const txC = T[lang].common;
+
   const [regions, setRegions] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
   const [languages, setLanguages] = useState<Array<{ code: string; label: string }>>([]);
 
   const [region, setRegion] = useState("");
   const [industry, setIndustry] = useState("");
-  const [language, setLanguage] = useState("ko");
+  const [language, setLanguage] = useState<string>(lang);
   const [question, setQuestion] = useState("");
   const [followUpQuestion, setFollowUpQuestion] = useState("");
 
@@ -125,7 +131,9 @@ export default function LawPage() {
         }
 
         if (nextLanguages.length > 0) {
-          setLanguage(nextLanguages.some((item) => item.code === "ko") ? "ko" : nextLanguages[0].code);
+          // 전역 언어 설정 우선, 없으면 ko 기본값
+          const preferred = nextLanguages.find((item) => item.code === lang);
+          setLanguage(preferred ? preferred.code : (nextLanguages.some((item) => item.code === "ko") ? "ko" : nextLanguages[0].code));
         }
       } catch (e: any) {
         setError(e?.message || "옵션 데이터를 불러오는 중 오류가 발생했습니다.");
@@ -203,24 +211,22 @@ export default function LawPage() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
             <Link href="/" style={{ textDecoration: "none" }}>
               <span className="ghost-btn" style={{ display: "inline-block", fontSize: "13px", padding: "6px 12px", cursor: "pointer" }}>
-                ← 홈으로
+                {txC.backHome}
               </span>
             </Link>
-            <div className="hero-badge" style={{ margin: 0 }}>외국인 노동자 법률 서비스</div>
+            <div className="hero-badge" style={{ margin: 0 }}>{tx.badge}</div>
           </div>
-          <h1 className="hero-title">외국인 노동자 법 설명</h1>
-          <p className="hero-desc">
-            질문을 분석하고 관련 법령을 근거로 이해하기 쉬운 상담 답변을 제공해드릴게요!
-          </p>
+          <h1 className="hero-title">{tx.title}</h1>
+          <p className="hero-desc">{tx.desc}</p>
         </section>
 
         <section className="top-grid top-grid-law">
           <div className="card law-input-card">
             <div className="card-header law-card-header-divided">
               <div className="card-title-row">
-                <h2>✍️ 질문 입력</h2>
+                <h2>{tx.inputTitle}</h2>
               </div>
-              <p>지역, 업종, 언어, 질문을 입력하면 법령 근거 기반 답변을 제공합니다.</p>
+              <p>{tx.inputDesc}</p>
             </div>
 
             <div
@@ -232,7 +238,7 @@ export default function LawPage() {
               }}
             >
               <div className="field" style={{ marginTop: 0 }}>
-                <label>지역</label>
+                <label>{tx.regionLabel}</label>
                 <div className="select-wrap">
                   <select
                     value={region}
@@ -250,7 +256,7 @@ export default function LawPage() {
               </div>
 
               <div className="field" style={{ marginTop: 0 }}>
-                <label>업종</label>
+                <label>{tx.industryLabel}</label>
                 <div className="select-wrap">
                   <select
                     value={industry}
@@ -268,7 +274,7 @@ export default function LawPage() {
               </div>
 
               <div className="field" style={{ marginTop: 0 }}>
-                <label>언어</label>
+                <label>{tx.languageLabel}</label>
                 <div className="select-wrap">
                   <select
                     value={language}
@@ -286,11 +292,11 @@ export default function LawPage() {
               </div>
 
               <div className="field" style={{ gridColumn: "1 / -1" }}>
-                <label>질문</label>
+                <label>{tx.questionLabel}</label>
                 <textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="예: 사장이 월급을 늦게 줘요. 기다리라고만 해요."
+                  placeholder={tx.questionPlaceholder}
                 />
               </div>
             </div>
@@ -301,7 +307,7 @@ export default function LawPage() {
                 onClick={() => handleAsk(question)}
                 disabled={loading || !question.trim() || optionsLoading}
               >
-                {loading ? "분석 중..." : "분석 시작"}
+                {loading ? tx.loadingBtn : tx.submitBtn}
               </button>
 
               <button
@@ -317,7 +323,7 @@ export default function LawPage() {
                   setValidationWarning("");
                 }}
               >
-                초기화
+                {lang === "en" ? "Reset" : "초기화"}
               </button>
             </div>
 
@@ -354,7 +360,7 @@ export default function LawPage() {
             </div>
 
             <div className="emergency-scenario-list">
-              {EMERGENCY_SCENARIOS.map((item) => (
+              {tx.scenarios.map((item) => (
                 <button
                   key={item.title}
                   className="emergency-scenario-btn"
@@ -393,7 +399,7 @@ export default function LawPage() {
                       className={`chat-item ${msg.role === "user" ? "chat-item-user" : "chat-item-assistant"}`}
                     >
                       <div className={`chat-role ${msg.role === "assistant" ? "chat-role-laki" : ""}`}>
-                        {msg.role === "user" ? "나" : "🤖 라키"}
+                        {msg.role === "user" ? (lang === "en" ? "Me" : "나") : "🤖 Laki"}
                       </div>
                       <div className="chat-content">{msg.content}</div>
                     </div>
@@ -402,8 +408,8 @@ export default function LawPage() {
               ) : (
                 <div className="law-empty-state">
                   <div className="law-empty-icon">⚖️</div>
-                  <p className="law-empty-title">아직 답변이 없어요</p>
-                  <p className="law-empty-desc">왼쪽에서 질문을 입력하고 분석을 시작해보세요.</p>
+                  <p className="law-empty-title">{tx.emptyTitle}</p>
+                  <p className="law-empty-desc">{tx.emptyDesc}</p>
                 </div>
               )}
 
@@ -453,7 +459,7 @@ export default function LawPage() {
                 <div className="support-links-card">
                   <div className="summary-title">바로 상담/신고하기</div>
                   <div className="support-links">
-                    {SUPPORT_LINKS.map((link) => (
+                    {tx.supportLinks.map((link) => (
                       <a
                         key={link.href}
                         className="support-link-btn"
