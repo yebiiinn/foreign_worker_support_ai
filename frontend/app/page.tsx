@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8001";
-
 type Category = "law" | "training";
 
 type AskResponse = {
@@ -149,12 +147,13 @@ export default function HomePage() {
   const [trainingConversationId, setTrainingConversationId] = useState<string | null>(null);
   const [trainingChatHistory, setTrainingChatHistory] = useState<ChatMessage[]>([]);
   const [lakiAssets, setLakiAssets] = useState<LakiAssetsResponse>({ full: [], face: [] });
+  const [lakiOpen, setLakiOpen] = useState(false);
 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
         setOptionsLoading(true);
-        const response = await fetch(`${BACKEND_URL}/options`);
+        const response = await fetch("http://127.0.0.1:8001/options");
 
         if (!response.ok) {
           throw new Error("옵션 데이터를 불러오지 못했습니다.");
@@ -261,7 +260,7 @@ export default function HomePage() {
       setLoading(true);
       setError("");
 
-      const response = await fetch(`${BACKEND_URL}/chat/law/message`, {
+      const response = await fetch("http://127.0.0.1:8001/chat/law/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -307,7 +306,7 @@ export default function HomePage() {
       setLoading(true);
       setError("");
 
-      const response = await fetch(`${BACKEND_URL}/chat/law/message`, {
+      const response = await fetch("http://127.0.0.1:8001/chat/law/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -354,7 +353,7 @@ export default function HomePage() {
       setTrainingError("");
       setTrainingSubmitted(true);
 
-      const response = await fetch(`${BACKEND_URL}/chat/training/message`, {
+      const response = await fetch("http://127.0.0.1:8001/chat/training/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -405,25 +404,25 @@ export default function HomePage() {
             외국인 고용·근로 통합 AI 서비스
           </h1>
 
-          <p style={{ margin: "14px 0 0", fontSize: "22px", fontWeight: 700, color: "#2563eb", textAlign: "center" }}>
-            외국인 근로자를 위한 쉽고 정확한 법률 상담
-          </p>
-
-          <p className="hero-desc" style={{ textAlign: "center", maxWidth: "760px", marginTop: "10px" }}>
-            외국인 근로자를 위한 법률 상담과 직업훈련 정보를 제공합니다.
+          <p className="hero-desc" style={{ textAlign: "center", maxWidth: "760px", marginTop: "14px" }}>
+            법률 상담부터 직업훈련 추천, 마음 챙기기까지 — 외국인 근로자의 한국 생활 전반을 함께합니다.
           </p>
 
           {heroLaki && (
             <div
+              onClick={() => setLakiOpen((prev) => !prev)}
               style={{
-                  position: "relative",
-                  width: "420px",
-                  height: "370px",
-                marginTop: "22px",
+                position: "relative",
+                width: lakiOpen ? "860px" : "420px",
+                height: "390px",
+                marginTop: "18px",
                 animation: "laki-float 2.2s ease-in-out infinite",
                 willChange: "transform",
+                cursor: "pointer",
+                transition: "width 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
+              {/* 위쪽 큰 말풍선 — 클릭 전에만 표시 */}
               <div
                 style={{
                   position: "absolute",
@@ -441,6 +440,9 @@ export default function HomePage() {
                   color: "#1e293b",
                   textAlign: "center",
                   boxShadow: "0 20px 40px rgba(30, 41, 59, 0.12)",
+                  opacity: lakiOpen ? 0 : 1,
+                  transition: "opacity 0.25s ease",
+                  pointerEvents: "none",
                 }}
               >
                 {language === "vi" ? (
@@ -477,17 +479,18 @@ export default function HomePage() {
                 />
               </div>
 
+              {/* 라키 이미지 — 클릭 시 왼쪽으로 이동 */}
               <div
                 style={{
                   position: "absolute",
                   bottom: 0,
-                  left: "50%",
-                  transform: "translateX(-50%)",
+                  top: "90px",
+                  left: lakiOpen ? "0px" : "75px",
                   width: "270px",
-                  height: "270px",
                   display: "flex",
                   alignItems: "flex-end",
                   justifyContent: "center",
+                  transition: "left 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
                 <img
@@ -495,12 +498,149 @@ export default function HomePage() {
                   alt="라키 마스코트"
                   style={{
                     width: "270px",
-                    height: "270px",
+                    height: "100%",
                     objectFit: "contain",
+                    objectPosition: "bottom",
                     filter: "drop-shadow(0 16px 28px rgba(37, 99, 235, 0.15))",
                     animation: "none",
                   }}
                 />
+
+                {/* 작은 힌트 말풍선 — 클릭 전에만 표시 */}
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "-104px",
+                    bottom: "88px",
+                    opacity: lakiOpen ? 0 : 1,
+                    transition: "opacity 0.2s ease",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {/* 말풍선 왼쪽 꼬리 */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: "-8px",
+                      top: "50%",
+                      width: "14px",
+                      height: "14px",
+                      background: "#f0f9ff",
+                      border: "1px solid rgba(186, 230, 253, 0.9)",
+                      borderRight: "none",
+                      borderTop: "none",
+                      transform: "translateY(-50%) rotate(45deg)",
+                    }}
+                  />
+                  <div
+                    style={{
+                      background: "#f0f9ff",
+                      border: "1px solid rgba(186, 230, 253, 0.9)",
+                      borderRadius: "16px",
+                      padding: "7px 14px",
+                      boxShadow: "0 4px 14px rgba(14, 165, 233, 0.1)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#0369a1" }}>
+                      저를 눌러보세요!
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 오른쪽 설명 말풍선 — 클릭 후 슬라이드인 */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "18px",
+                  left: lakiOpen ? "306px" : "240px",
+                  width: "554px",
+                  opacity: lakiOpen ? 1 : 0,
+                  transition: "left 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease 0.15s",
+                  pointerEvents: "none",
+                }}
+              >
+                {/* 말풍선 왼쪽 꼬리 */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "-11px",
+                    bottom: "36px",
+                    width: "22px",
+                    height: "22px",
+                    background: "#f0f7ff",
+                    borderLeft: "1px solid rgba(191, 219, 254, 0.95)",
+                    borderBottom: "1px solid rgba(191, 219, 254, 0.95)",
+                    transform: "rotate(45deg)",
+                    zIndex: 0,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                    background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%)",
+                    border: "1px solid rgba(191, 219, 254, 0.95)",
+                    borderRadius: "20px",
+                    padding: "20px 26px",
+                    boxShadow: "0 12px 32px rgba(37, 99, 235, 0.1)",
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "10px" }}>
+                    <p style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: 800, color: "#1e40af" }}>
+                      노동 문제 해결의 열쇠, 라키
+                    </p>
+                    <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "#2563eb", letterSpacing: "0.08em" }}>
+                      Labor · AI · Key
+                    </p>
+                  </div>
+                  <p style={{ margin: "0 0 12px", fontSize: "14.5px", color: "#475569", lineHeight: 1.65, fontWeight: 400 }}>
+                    세계 각국에서 한국으로 온 외국인 근로자들이 언어와 제도의 벽 없이<br />안전하게 일할 수 있도록 만들어진 AI 노동 도우미예요.
+                  </p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "14px", justifyContent: "center" }}>
+                    {["한국어", "English", "Tiếng Việt", "中文", "ภาษาไทย", "O'zbekcha"].map((lang) => (
+                      <span
+                        key={lang}
+                        style={{
+                          fontSize: "11px",
+                          fontWeight: 600,
+                          color: "#2563eb",
+                          background: "rgba(219, 234, 254, 0.7)",
+                          border: "1px solid rgba(147, 197, 253, 0.6)",
+                          borderRadius: "20px",
+                          padding: "2px 9px",
+                        }}
+                      >
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                  <div style={{ borderTop: "1px solid rgba(191, 219, 254, 0.6)", paddingTop: "14px", display: "flex", gap: "10px" }}>
+                    {[
+                      ["법률 상담", "부당한 처우·임금 체불·산재 등 노동 권리를 법령 근거로 안내해드려요."],
+                      ["직업훈련 추천", "업종과 관심사에 맞는 직업훈련 과정을 찾아 커리어를 키워드려요."],
+                      ["마음 챙기기", "낯선 환경의 외로움과 스트레스, 라키가 따뜻하게 들어드려요."],
+                    ].map(([title, desc]) => (
+                      <div
+                        key={title}
+                        style={{
+                          flex: 1,
+                          background: "rgba(239, 246, 255, 0.7)",
+                          border: "1px solid rgba(191, 219, 254, 0.5)",
+                          borderRadius: "12px",
+                          padding: "10px 14px",
+                        }}
+                      >
+                        <p style={{ margin: "0 0 5px", fontSize: "14px", fontWeight: 700, color: "#1e40af" }}>{title}</p>
+                        <p style={{ margin: 0, fontSize: "13px", color: "#475569", lineHeight: 1.55 }}>{desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{ margin: "10px 0 0", fontSize: "12px", color: "#94a3b8", textAlign: "right" }}>
+                    다시 누르면 닫혀요
+                  </p>
+                </div>
               </div>
             </div>
           )}
