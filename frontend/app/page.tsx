@@ -510,8 +510,8 @@ export default function HomePage() {
                 <div
                   style={{
                     position: "absolute",
-                    right: "-104px",
-                    bottom: "88px",
+                    right: "-112px",
+                    bottom: "96px",
                     opacity: lakiOpen ? 0 : 1,
                     transition: "opacity 0.2s ease",
                     pointerEvents: "none",
@@ -521,19 +521,22 @@ export default function HomePage() {
                   <div
                     style={{
                       position: "absolute",
-                      left: "-8px",
+                      left: "-7px",
                       top: "50%",
-                      width: "14px",
-                      height: "14px",
+                      width: "13px",
+                      height: "13px",
                       background: "#f0f9ff",
                       border: "1px solid rgba(186, 230, 253, 0.9)",
                       borderRight: "none",
                       borderTop: "none",
                       transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
                     }}
                   />
                   <div
                     style={{
+                      position: "relative",
+                      zIndex: 1,
                       background: "#f0f9ff",
                       border: "1px solid rgba(186, 230, 253, 0.9)",
                       borderRadius: "16px",
