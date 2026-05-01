@@ -510,39 +510,43 @@ export default function HomePage() {
                 <div
                   style={{
                     position: "absolute",
-                    right: "-116px",
-                    bottom: "96px",
+                    right: "-124px",
+                    bottom: "100px",
                     opacity: lakiOpen ? 0 : 1,
                     transition: "opacity 0.2s ease",
                     pointerEvents: "none",
-                    filter: "drop-shadow(0 4px 12px rgba(14, 165, 233, 0.22))",
+                    filter: "drop-shadow(0 3px 10px rgba(14, 165, 233, 0.28))",
                   }}
                 >
-                  {/* 말풍선 왼쪽 꼬리 — CSS 삼각형, 테두리 없음 */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: "-10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      width: 0,
-                      height: 0,
-                      borderTop: "8px solid transparent",
-                      borderBottom: "8px solid transparent",
-                      borderRight: "10px solid #e0f2fe",
-                    }}
-                  />
-                  <div
-                    style={{
-                      background: "#e0f2fe",
-                      borderRadius: "16px",
-                      padding: "8px 16px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#0369a1" }}>
-                      저를 눌러보세요!
-                    </span>
+                  {/* 내부 래퍼: 삼각형 기준점 */}
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    {/* 말풍선 왼쪽 꼬리 — 라키 방향으로 뾰족하게 */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: "-11px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        width: 0,
+                        height: 0,
+                        borderTop: "9px solid transparent",
+                        borderBottom: "9px solid transparent",
+                        borderRight: "11px solid #dbeafe",
+                      }}
+                    />
+                    {/* 말풍선 본체 */}
+                    <div
+                      style={{
+                        background: "#dbeafe",
+                        borderRadius: "14px",
+                        padding: "8px 15px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <span style={{ fontSize: "13px", fontWeight: 700, color: "#1d4ed8" }}>
+                        저를 눌러보세요!
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
