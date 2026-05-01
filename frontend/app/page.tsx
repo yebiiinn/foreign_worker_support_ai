@@ -510,38 +510,33 @@ export default function HomePage() {
                 <div
                   style={{
                     position: "absolute",
-                    right: "-112px",
+                    right: "-116px",
                     bottom: "96px",
                     opacity: lakiOpen ? 0 : 1,
                     transition: "opacity 0.2s ease",
                     pointerEvents: "none",
+                    filter: "drop-shadow(0 4px 12px rgba(14, 165, 233, 0.22))",
                   }}
                 >
-                  {/* 말풍선 왼쪽 꼬리 */}
+                  {/* 말풍선 왼쪽 꼬리 — CSS 삼각형, 테두리 없음 */}
                   <div
                     style={{
                       position: "absolute",
-                      left: "-7px",
+                      left: "-10px",
                       top: "50%",
-                      width: "13px",
-                      height: "13px",
-                      background: "#f0f9ff",
-                      border: "1px solid rgba(186, 230, 253, 0.9)",
-                      borderRight: "none",
-                      borderTop: "none",
-                      transform: "translateY(-50%) rotate(45deg)",
-                      zIndex: 0,
+                      transform: "translateY(-50%)",
+                      width: 0,
+                      height: 0,
+                      borderTop: "8px solid transparent",
+                      borderBottom: "8px solid transparent",
+                      borderRight: "10px solid #e0f2fe",
                     }}
                   />
                   <div
                     style={{
-                      position: "relative",
-                      zIndex: 1,
-                      background: "#f0f9ff",
-                      border: "1px solid rgba(186, 230, 253, 0.9)",
+                      background: "#e0f2fe",
                       borderRadius: "16px",
-                      padding: "7px 14px",
-                      boxShadow: "0 4px 14px rgba(14, 165, 233, 0.1)",
+                      padding: "8px 16px",
                       whiteSpace: "nowrap",
                     }}
                   >
