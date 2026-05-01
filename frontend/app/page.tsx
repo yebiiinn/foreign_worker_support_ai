@@ -121,6 +121,16 @@ const pickLakiByKeywords = (paths: string[], keywords: string[], fallbackIndex =
 export default function HomePage() {
   const { lang, setLang } = useLang();
   const tx = T[lang].home;
+  const [fading, setFading] = useState(false);
+
+  const handleLangChange = (l: typeof lang) => {
+    if (l === lang) return;
+    setFading(true);
+    setTimeout(() => {
+      setLang(l);
+      setFading(false);
+    }, 180);
+  };
 
   const [category, setCategory] = useState<Category>("law");
 
@@ -401,22 +411,31 @@ export default function HomePage() {
 
         <div className="home-hero-content">
           {/* 언어 토글 */}
-          <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+          <div style={{
+            display: "inline-flex",
+            background: "rgba(255,255,255,0.6)",
+            border: "1px solid rgba(191,219,254,0.7)",
+            borderRadius: "24px",
+            padding: "3px",
+            backdropFilter: "blur(8px)",
+            boxShadow: "0 2px 12px rgba(30,58,138,0.07)",
+          }}>
             {(["ko", "en"] as const).map((l) => (
               <button
                 key={l}
-                onClick={() => setLang(l)}
+                onClick={() => handleLangChange(l)}
                 style={{
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  padding: "5px 14px",
+                  fontSize: "12px",
+                  fontWeight: lang === l ? 700 : 500,
+                  padding: "5px 18px",
                   borderRadius: "20px",
-                  border: lang === l ? "none" : "1px solid rgba(191,219,254,0.8)",
-                  background: lang === l ? "linear-gradient(135deg,#2563eb,#3b82f6)" : "rgba(255,255,255,0.7)",
-                  color: lang === l ? "#fff" : "#64748b",
+                  border: "none",
+                  background: lang === l ? "linear-gradient(135deg,#2563eb,#3b82f6)" : "transparent",
+                  color: lang === l ? "#fff" : "#94a3b8",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
-                  boxShadow: lang === l ? "0 2px 10px rgba(37,99,235,0.3)" : "none",
+                  boxShadow: lang === l ? "0 2px 8px rgba(37,99,235,0.25)" : "none",
+                  letterSpacing: "0.02em",
                 }}
               >
                 {l === "ko" ? "한국어" : "English"}
@@ -424,7 +443,12 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="hero-badge">{tx.badge}</div>
+          {/* 페이드 영역 */}
+          <div style={{ opacity: fading ? 0 : 1, transition: "opacity 0.18s ease", width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "12px" }}>
+            <div className="hero-badge" style={{ margin: 0 }}>{tx.badge}</div>
+          </div>
 
           <h1
             className="hero-title"
@@ -433,7 +457,7 @@ export default function HomePage() {
             {tx.title}
           </h1>
 
-          <p className="hero-desc" style={{ textAlign: "center", maxWidth: "760px", marginTop: "14px" }}>
+          <p className="hero-desc" style={{ textAlign: "center", maxWidth: "900px", marginTop: "14px", whiteSpace: "nowrap" }}>
             {tx.desc}
           </p>
 
@@ -662,6 +686,7 @@ export default function HomePage() {
               </div>
             </div>
           )}
+          </div>{/* 페이드 영역 끝 */}
         </div>
 
         {/* 스크롤 유도 */}

@@ -81,6 +81,8 @@ export default function LawPage() {
   const { lang } = useLang();
   const tx = T[lang].law;
   const txC = T[lang].common;
+  const langRef = useRef(lang);
+  langRef.current = lang;
 
   const [regions, setRegions] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
@@ -89,6 +91,10 @@ export default function LawPage() {
   const [region, setRegion] = useState("");
   const [industry, setIndustry] = useState("");
   const [language, setLanguage] = useState<string>(lang);
+
+  useEffect(() => {
+    setLanguage(lang);
+  }, [lang]);
   const [question, setQuestion] = useState("");
   const [followUpQuestion, setFollowUpQuestion] = useState("");
 
@@ -136,7 +142,7 @@ export default function LawPage() {
           setLanguage(preferred ? preferred.code : (nextLanguages.some((item) => item.code === "ko") ? "ko" : nextLanguages[0].code));
         }
       } catch (e: any) {
-        setError(e?.message || "옵션 데이터를 불러오는 중 오류가 발생했습니다.");
+        setError(e?.message || T[langRef.current].law.optionsFetchError);
       } finally {
         setOptionsLoading(false);
       }
@@ -162,9 +168,7 @@ export default function LawPage() {
       const validateData = await validateRes.json();
 
       if (!validateData.valid) {
-        setValidationWarning(
-          "이 질문은 외국인 노동자 법률 서비스와 관련이 없는 것 같아요. 😅\n임금, 근로 환경, 산업재해, 비자, 고용 계약 등 근로와 관련된 질문을 입력해 주세요!"
-        );
+        setValidationWarning(tx.validationWarning);
         return;
       }
 
@@ -183,7 +187,7 @@ export default function LawPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data?.detail || "법률 상담 요청 중 오류가 발생했습니다.");
+        throw new Error(data?.detail || tx.apiCallError);
       }
 
       const typedData = data as LawChatResponse;
@@ -198,7 +202,7 @@ export default function LawPage() {
         });
       }, 100);
     } catch (e: any) {
-      setError(e?.message || "법률 상담 요청 중 오류가 발생했습니다.");
+      setError(e?.message || tx.apiCallError);
     } finally {
       setLoading(false);
     }
@@ -323,16 +327,16 @@ export default function LawPage() {
                   setValidationWarning("");
                 }}
               >
-                {lang === "en" ? "Reset" : "초기화"}
+                {tx.resetBtn}
               </button>
             </div>
 
             <div className="notice" style={{ marginTop: "10px"}}>
-              분석을 시작하면 아래 답변 결과 영역으로 자동 이동합니다.
+              {tx.analysisNotice}
             </div>
 
             <div className="law-info-box">
-              💡 입력한 질문은 1차 상황 분석 후, 관련 법률·시행령·시행규칙 조문을 검색하여 답변을 생성합니다.
+              {tx.analysisInfoBox}
             </div>
 
             {validationWarning && (
@@ -354,9 +358,9 @@ export default function LawPage() {
           <div className="card law-faq-card">
             <div className="card-header law-card-header-divided">
               <div className="card-title-row">
-                <h2>🚨 지금 이런 상황인가요?</h2>
+                <h2>{tx.emergencyTitle}</h2>
               </div>
-              <p>해당하는 상황을 선택하면 질문창에 자동으로 입력돼요.</p>
+              <p>{tx.emergencyDesc}</p>
             </div>
 
             <div className="emergency-scenario-list">
@@ -385,9 +389,9 @@ export default function LawPage() {
           <div className="card">
             <div className="card-header law-card-header-divided">
               <div className="card-title-row">
-                <h2>📋 답변 결과</h2>
+                <h2>{tx.chatResultTitle}</h2>
               </div>
-              <p>법령 근거를 바탕으로 생성된 최종 답변입니다.</p>
+              <p>{tx.chatResultDesc}</p>
             </div>
 
             <div className="result-section">
@@ -415,7 +419,7 @@ export default function LawPage() {
 
               {summary && (
                 <div className="summary-card">
-                  <div className="summary-title">상담 요약</div>
+                  <div className="summary-title">{tx.summaryShortTitle}</div>
                   <div className="summary-line">{summary.one_liner}</div>
                   {!!summary.action_items?.length && (
                     <ul className="summary-actions">
@@ -430,13 +434,13 @@ export default function LawPage() {
               {history.length > 0 && (
                 <div className="followup-box">
                   <div className="followup-head">
-                    <label className="followup-label">추가 질문</label>
-                    <p className="followup-helper">위 답변과 이어서 궁금한 내용을 편하게 입력해 주세요.</p>
+                    <label className="followup-label">{tx.followUpLabel}</label>
+                    <p className="followup-helper">{tx.followUpHelper}</p>
                   </div>
                   <textarea
                     value={followUpQuestion}
                     onChange={(e) => setFollowUpQuestion(e.target.value)}
-                    placeholder="예: 신고 후 진행 절차는 어떻게 되나요?"
+                    placeholder={tx.followUpPlaceholder}
                     className="followup-textarea"
                   />
                   <div className="action-row followup-action-row">
@@ -449,7 +453,7 @@ export default function LawPage() {
                       }}
                       disabled={loading || !followUpQuestion.trim()}
                     >
-                      {loading ? "전송 중..." : "추가 질문 보내기"}
+                      {loading ? tx.followUpLoadingBtn : tx.followUpBtn}
                     </button>
                   </div>
                 </div>
@@ -457,7 +461,7 @@ export default function LawPage() {
 
               {history.length > 0 && (
                 <div className="support-links-card">
-                  <div className="summary-title">바로 상담/신고하기</div>
+                  <div className="summary-title">{tx.supportLinksTitle}</div>
                   <div className="support-links">
                     {tx.supportLinks.map((link) => (
                       <a
@@ -479,9 +483,9 @@ export default function LawPage() {
           <div className="card">
             <div className="card-header law-card-header-divided">
               <div className="card-title-row">
-                <h2>🔍 관련 법령 검색 결과</h2>
+                <h2>{tx.docsResultTitle}</h2>
               </div>
-              <p>질문과 관련된 법률·시행령·시행규칙 조문을 확인할 수 있습니다.</p>
+              <p>{tx.docsResultDesc}</p>
             </div>
 
             <div className="law-docs-area">
@@ -502,8 +506,8 @@ export default function LawPage() {
               ) : (
                 <div className="law-empty-state">
                   <div className="law-empty-icon">📚</div>
-                  <p className="law-empty-title">검색된 법령이 없어요</p>
-                  <p className="law-empty-desc">질문을 입력하면 관련 법령 조문이 여기에 표시됩니다.</p>
+                  <p className="law-empty-title">{tx.docsEmptyTitle}</p>
+                  <p className="law-empty-desc">{tx.docsEmptyDesc}</p>
                 </div>
               )}
             </div>
@@ -513,69 +517,40 @@ export default function LawPage() {
           <div className="card">
             <div className="card-header law-card-header-divided">
               <div className="card-title-row">
-                <h2>🚔 신고하면 어떻게 되나요?</h2>
+                <h2>{tx.reportTitle}</h2>
               </div>
-              <p>신고 절차와 체류자격 보호에 대해 미리 알아보세요. 신고는 여러분의 권리입니다.</p>
+              <p>{tx.reportDesc}</p>
             </div>
 
             <div className="report-sim-notice">
               <span className="report-sim-notice-icon">🛡️</span>
-              <span>
-                <strong>신고해도 비자·체류자격은 보호됩니다.</strong>&nbsp;피해를 신고한다는 이유만으로 체류자격을 취소하거나 강제 추방할 수 없어요. 익명 신고도 가능합니다.
-              </span>
+              <span>{tx.reportNotice}</span>
             </div>
 
             <div className="report-sim-flow">
-              <div className="report-sim-step">
-                <div className="report-sim-num">1</div>
-                <div className="report-sim-content">
-                  <div className="report-sim-title">신고·접수</div>
-                  <div className="report-sim-desc">고용노동부 1350(무료)에 전화하거나 온라인으로 신고해요. 익명 접수도 가능해요.</div>
-                  <span className="report-sim-tag">📞 1350 (24시간)</span>
+              {tx.reportSteps.map((step, idx) => (
+                <div key={step.num} style={{ display: "contents" }}>
+                  {idx > 0 && <div className="report-sim-arrow">→</div>}
+                  <div className="report-sim-step">
+                    <div className="report-sim-num">{step.num}</div>
+                    <div className="report-sim-content">
+                      <div className="report-sim-title">{step.title}</div>
+                      <div className="report-sim-desc">{step.desc}</div>
+                      <span className="report-sim-tag">{step.tag}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className="report-sim-arrow">→</div>
-
-              <div className="report-sim-step">
-                <div className="report-sim-num">2</div>
-                <div className="report-sim-content">
-                  <div className="report-sim-title">근로감독관 조사</div>
-                  <div className="report-sim-desc">근로감독관이 사업장을 조사하고 사용자(고용주)에게 소명을 요구해요.</div>
-                  <span className="report-sim-tag">📋 피해자 진술 포함</span>
-                </div>
-              </div>
-
-              <div className="report-sim-arrow">→</div>
-
-              <div className="report-sim-step">
-                <div className="report-sim-num">3</div>
-                <div className="report-sim-content">
-                  <div className="report-sim-title">체류자격 보호</div>
-                  <div className="report-sim-desc">신고 기간 중 체류자격 연장 또는 사업장 변경 조치를 받을 수 있어요.</div>
-                  <span className="report-sim-tag">🏠 사업장 변경 가능</span>
-                </div>
-              </div>
-
-              <div className="report-sim-arrow">→</div>
-
-              <div className="report-sim-step">
-                <div className="report-sim-num">4</div>
-                <div className="report-sim-content">
-                  <div className="report-sim-title">결과 처리</div>
-                  <div className="report-sim-desc">임금 지급 명령, 과태료 부과, 형사 고발 등 위반 내용에 따라 처벌돼요.</div>
-                  <span className="report-sim-tag">⚖️ 밀린 임금 받을 수 있어요</span>
-                </div>
-              </div>
+              ))}
             </div>
 
             <div className="report-sim-links">
-              <div className="report-sim-links-title">📌 바로 신고·상담하기</div>
+              <div className="report-sim-links-title">{tx.reportLinksTitle}</div>
               <div className="report-sim-links-row">
-                <a className="report-sim-link-btn" href="https://www.moel.go.kr/1350/" target="_blank" rel="noreferrer">고용노동부 1350</a>
-                <a className="report-sim-link-btn" href="https://minwon.moel.go.kr/" target="_blank" rel="noreferrer">온라인 민원 신고</a>
-                <a className="report-sim-link-btn" href="https://www.moel.go.kr/policy/policyinfo/foreigner/list.do" target="_blank" rel="noreferrer">외국인근로자지원센터</a>
-                <a className="report-sim-link-btn" href="https://www.hikorea.go.kr/" target="_blank" rel="noreferrer">체류자격 안내 (HiKorea)</a>
+                {tx.reportLinks.map((link) => (
+                  <a key={link.href} className="report-sim-link-btn" href={link.href} target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
