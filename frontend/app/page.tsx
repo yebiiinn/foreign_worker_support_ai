@@ -568,6 +568,8 @@ export default function HomePage() {
                         background: "#ffffff",
                         borderLeft: "1.5px solid #bae6fd",
                         borderBottom: "1.5px solid #bae6fd",
+                        borderRight: "1.5px solid #ffffff",
+                        borderTop: "1.5px solid transparent",
                         transform: "translateY(-50%) rotate(45deg)",
                         zIndex: 0,
                       }}
