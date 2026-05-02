@@ -555,25 +555,28 @@ export default function HomePage() {
                     filter: "drop-shadow(0 3px 10px rgba(14, 165, 233, 0.28))",
                   }}
                 >
-                  {/* 내부 래퍼: 삼각형 기준점 */}
+                  {/* 내부 래퍼: 꼬리 기준점 */}
                   <div style={{ position: "relative", display: "inline-block" }}>
-                    {/* 말풍선 왼쪽 꼬리 — 라키 방향으로 뾰족하게 */}
+                    {/* 말풍선 꼬리 — 흰색 배경 + 좌하단만 하늘색 테두리, 우측은 본체에 가려짐 */}
                     <div
                       style={{
                         position: "absolute",
-                        left: "-11px",
+                        left: "-8px",
                         top: "50%",
-                        transform: "translateY(-50%)",
-                        width: 0,
-                        height: 0,
-                        borderTop: "9px solid transparent",
-                        borderBottom: "9px solid transparent",
-                        borderRight: "11px solid #bae6fd",
+                        width: "14px",
+                        height: "14px",
+                        background: "#ffffff",
+                        borderLeft: "1.5px solid #bae6fd",
+                        borderBottom: "1.5px solid #bae6fd",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
                       }}
                     />
-                    {/* 말풍선 본체 */}
+                    {/* 말풍선 본체 — 꼬리의 우측을 덮어 자연스럽게 연결 */}
                     <div
                       style={{
+                        position: "relative",
+                        zIndex: 1,
                         background: "#ffffff",
                         border: "1.5px solid #bae6fd",
                         borderRadius: "14px",
