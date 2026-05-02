@@ -466,7 +466,7 @@ export default function HomePage() {
               onClick={() => setLakiOpen((prev) => !prev)}
               style={{
                 position: "relative",
-                width: lakiOpen ? "860px" : "420px",
+                width: lakiOpen ? "860px" : lang === "en" ? "500px" : "420px",
                 height: "390px",
                 marginTop: "18px",
                 animation: "laki-float 2.2s ease-in-out infinite",
@@ -482,7 +482,8 @@ export default function HomePage() {
                   top: 0,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  width: "100%",
+                  width: lang === "en" ? "max-content" : "100%",
+                  maxWidth: lang === "en" ? "560px" : "100%",
                   background: "linear-gradient(180deg, #ffffff, #f8fbff)",
                   border: "1px solid rgba(191, 219, 254, 0.95)",
                   borderRadius: "28px",
@@ -496,6 +497,7 @@ export default function HomePage() {
                   opacity: lakiOpen ? 0 : 1,
                   transition: "opacity 0.25s ease",
                   pointerEvents: "none",
+                  whiteSpace: lang === "en" ? "nowrap" : "normal",
                 }}
               >
                 <span>{tx.lakiGreet1}</span>
