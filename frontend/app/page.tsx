@@ -547,8 +547,9 @@ export default function HomePage() {
                 <div
                   style={{
                     position: "absolute",
-                    right: "-136px",
-                    bottom: "60px",
+                    right: "-124px",
+                    bottom: "100px",
+                    zIndex: 10,
                     opacity: lakiOpen ? 0 : 1,
                     transition: "opacity 0.2s ease",
                     pointerEvents: "none",
@@ -557,24 +558,24 @@ export default function HomePage() {
                 >
                   {/* 내부 래퍼: 꼬리 기준점 */}
                   <div style={{ position: "relative", display: "inline-block" }}>
-                    {/* 말풍선 꼬리 — 위쪽으로 뾰족, 본체가 하단을 덮어 자연스럽게 연결 */}
+                    {/* 말풍선 꼬리 — 왼쪽(라키 방향)으로 뾰족 */}
                     <div
                       style={{
                         position: "absolute",
-                        top: "-8px",
-                        left: "18px",
+                        left: "-8px",
+                        top: "50%",
                         width: "14px",
                         height: "14px",
                         background: "#ffffff",
-                        borderTop: "1.5px solid #bae6fd",
-                        borderRight: "1.5px solid #bae6fd",
-                        borderBottom: "1.5px solid #ffffff",
-                        borderLeft: "1.5px solid transparent",
-                        transform: "rotate(45deg)",
+                        borderLeft: "1.5px solid #bae6fd",
+                        borderBottom: "1.5px solid #bae6fd",
+                        borderRight: "1.5px solid #ffffff",
+                        borderTop: "1.5px solid transparent",
+                        transform: "translateY(-50%) rotate(45deg)",
                         zIndex: 0,
                       }}
                     />
-                    {/* 말풍선 본체 — 꼬리의 하단을 덮어 자연스럽게 연결 */}
+                    {/* 말풍선 본체 */}
                     <div
                       style={{
                         position: "relative",
