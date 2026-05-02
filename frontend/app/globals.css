@@ -1439,7 +1439,7 @@ textarea {
   }
 
   .home-laki-section {
-    display: none;
+    height: 280px !important;
   }
 
   .home-services-section {
