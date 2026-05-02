@@ -1151,6 +1151,65 @@ def get_options():
     }
 
 
+@app.get("/training/by-region")
+def training_by_region():
+    """주소 기반으로 시도별 훈련과정 그룹핑하여 반환."""
+    global TRAINING_COURSES
+    if not TRAINING_COURSES:
+        raise HTTPException(status_code=500, detail="Training data not loaded.")
+
+    REGION_PREFIXES = [
+        "서울특별시", "부산광역시", "대구광역시", "인천광역시",
+        "광주광역시", "대전광역시", "울산광역시", "세종특별자치시",
+        "경기도", "강원특별자치도", "강원도", "충청북도", "충청남도",
+        "전북특별자치도", "전라북도", "전라남도",
+        "경상북도", "경상남도", "제주특별자치도",
+    ]
+    REGION_NORMALIZE = {
+        "강원도": "강원특별자치도",
+        "전라북도": "전북특별자치도",
+    }
+
+    grouped: Dict[str, List[Dict[str, Any]]] = {}
+    for course in TRAINING_COURSES:
+        addr = course.get("address", "").strip()
+        matched = None
+        for prefix in REGION_PREFIXES:
+            if addr.startswith(prefix):
+                matched = REGION_NORMALIZE.get(prefix, prefix)
+                break
+        if not matched:
+            parts = addr.split()
+            if parts:
+                matched = REGION_NORMALIZE.get(parts[0], parts[0])
+        if matched:
+            grouped.setdefault(matched, []).append({
+                "course_name": course.get("course_name", ""),
+                "course_name_en": course.get("course_name_en", ""),
+                "institution": course.get("institution", ""),
+                "address": course.get("address", ""),
+                "start_date": course.get("start_date", ""),
+                "end_date": course.get("end_date", ""),
+                "hours": course.get("hours", ""),
+            })
+
+    # 지도·도 단위 UX: 광역시·세종 등을 해당 도(또는 경기)로 합침
+    MERGE_INTO_DO = {
+        "인천광역시": "경기도",
+        "세종특별자치시": "충청남도",
+        "대전광역시": "충청남도",
+        "대구광역시": "경상북도",
+        "부산광역시": "경상남도",
+        "울산광역시": "경상남도",
+    }
+    merged: Dict[str, List[Dict[str, Any]]] = {}
+    for k, courses in grouped.items():
+        target = MERGE_INTO_DO.get(k, k)
+        merged.setdefault(target, []).extend(courses)
+
+    return {"regions": {k: v for k, v in sorted(merged.items())}}
+
+
 @app.post("/training/recommend")
 def recommend_training(req: TrainingRecommendRequest):
     try:

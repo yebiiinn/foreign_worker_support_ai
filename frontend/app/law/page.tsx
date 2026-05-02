@@ -160,15 +160,6 @@ export default function LawPage() {
     const escHtml = (str: string) =>
       str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br/>");
 
-    const consultationRows = history.map((msg) => {
-      const isUser = msg.role === "user";
-      return `
-        <div class="msg ${isUser ? "msg-user" : "msg-laki"}">
-          <div class="msg-role">${isUser ? tx.docRoleUser : tx.docRoleAssistant}</div>
-          <div class="msg-content">${escHtml(msg.content)}</div>
-        </div>`;
-    }).join("");
-
     const summaryHtml = summary ? `
       <section>
         <h2 class="section-title">${tx.docSectionSummary}</h2>
@@ -269,10 +260,6 @@ export default function LawPage() {
       <div class="meta-item"><span class="meta-label">${tx.docInfoIndustry}</span><span class="meta-value">${industry}</span></div>
       <div class="meta-item"><span class="meta-label">${tx.docInfoLang}</span><span class="meta-value">${language}</span></div>
     </div>
-    <section>
-      <h2 class="section-title">${tx.docSectionConsult}</h2>
-      ${consultationRows}
-    </section>
     ${summaryHtml}
     ${lawsHtml}
     ${supportHtml}

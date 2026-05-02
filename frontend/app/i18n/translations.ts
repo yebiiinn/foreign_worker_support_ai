@@ -186,6 +186,13 @@ export const T = {
       emptyTitle: "아직 추천 결과가 없어요",
       emptyDesc: "관심 분야를 입력하고 추천을 받아보세요.",
       reasonLabel: "💡 추천 이유",
+      mapRegionEmptyTitle: "이 지역에 표시할 과정이 없어요",
+      mapRegionEmptyDesc:
+        "지금 서비스에 연결된 데이터에는 이 지역 주소로 등록된 훈련 과정이 없어요.\n실제로는 지역·시기마다 모집 과정이 달라질 수 있어요.",
+      mapRegionEmptyTip:
+        "원하는 분야가 있으면 「과정 추천받기」 탭에서 키워드로 전국 과정을 찾아보거나,\n아래 고용24에서 전국 훈련 정보를 확인해 보세요.",
+      mapRegionEmptyCta: "과정 추천받기로 이동",
+      mapRegionEmptyLink: "고용24(워크넷) 직업훈련 정보",
     },
 
     // ── 마음 챙기기 페이지 ──
@@ -428,6 +435,13 @@ export const T = {
       emptyTitle: "No recommendations yet",
       emptyDesc: "Enter your area of interest to get recommendations.",
       reasonLabel: "💡 Why Recommended",
+      mapRegionEmptyTitle: "No courses to show in this region",
+      mapRegionEmptyDesc:
+        "Our current dataset doesn't include training sites registered with an address in this area.\nReal openings vary by region and season.",
+      mapRegionEmptyTip:
+        "Try the Recommendations tab to search nationwide by keyword,\nor use the national training portal below.",
+      mapRegionEmptyCta: "Go to Recommendations tab",
+      mapRegionEmptyLink: "Work24 — vocational training info",
     },
 
     // ── Mindfulness Page ──

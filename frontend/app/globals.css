@@ -132,7 +132,7 @@ textarea {
 
 .top-grid-training {
   align-items: stretch;
-  grid-template-columns: 0.8fr 1.2fr;
+  grid-template-columns: 1.2fr 0.8fr;
 }
 
 .top-grid-training > .card {
