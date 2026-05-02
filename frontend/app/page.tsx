@@ -558,7 +558,7 @@ export default function HomePage() {
                 >
                   {/* 내부 래퍼: 꼬리 기준점 */}
                   <div style={{ position: "relative", display: "inline-block" }}>
-                    {/* 말풍선 꼬리 — 왼쪽(라키 방향)으로 뾰족 */}
+                    {/* 말풍선 꼬리 — 왼쪽(라키 방향)으로 뾰족, 본체 위에 올려서 테두리 자연 연결 */}
                     <div
                       style={{
                         position: "absolute",
@@ -572,7 +572,7 @@ export default function HomePage() {
                         borderRight: "1.5px solid #ffffff",
                         borderTop: "1.5px solid transparent",
                         transform: "translateY(-50%) rotate(45deg)",
-                        zIndex: 0,
+                        zIndex: 2,
                       }}
                     />
                     {/* 말풍선 본체 */}
