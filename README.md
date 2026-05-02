@@ -32,6 +32,7 @@
 - **OpenAI** `gpt-4o-mini` (Chat), `text-embedding-3-small` (Embedding)
 - **ChromaDB** — 법령 벡터 데이터베이스
 - **PyMuPDF** — PDF 법령 문서 파싱
+- **scikit-learn** — 검색 결과 Re-ranking (TF-IDF 기반)
 
 ### 배포
 - **Railway** (Backend · Frontend 각각 배포)
@@ -50,10 +51,20 @@ project/
 ├── frontend/
 │   ├── app/
 │   │   ├── page.tsx             # 메인 홈 (히어로 + 서비스 카드)
+│   │   ├── layout.tsx           # 루트 레이아웃
+│   │   ├── providers.tsx        # 전역 Context Provider
+│   │   ├── globals.css
 │   │   ├── law/                 # 법률 상담 페이지
 │   │   ├── training/            # 직업훈련 추천 페이지
 │   │   ├── mindfulness/         # 마음 챙기기 페이지
-│   │   └── api/                 # Next.js API Routes (마스코트 등)
+│   │   ├── context/
+│   │   │   └── LanguageContext.tsx  # 다국어 언어 Context
+│   │   ├── i18n/
+│   │   │   └── translations.ts  # 6개 언어 번역 데이터
+│   │   └── api/                 # Next.js API Routes
+│   │       ├── laki/            # 마스코트 라키 응답 API
+│   │       ├── mindfulness/     # 마음 챙기기 AI 대화 API
+│   │       └── validate/        # 입력값 검증 API
 │   └── package.json
 ├── data/
 │   ├── 외국인근로자의 고용 등에 관한 법률*.pdf   # 법률/시행령/시행규칙
@@ -115,11 +126,13 @@ npm run dev
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
+| `GET` | `/` | API 루트 (엔드포인트 목록) |
 | `GET` | `/health` | 서버 상태 확인 |
 | `GET` | `/options` | 지역·업종·언어 목록 조회 |
 | `POST` | `/chat/law/message` | 법률 상담 챗 (대화형 RAG) |
 | `POST` | `/chat/training/message` | 직업훈련 추천 챗 |
-| `POST` | `/ask` | 단건 법령 RAG 질의 |
+| `POST` | `/ask` | 단건 법령 RAG 질의 (답변 생성 포함) |
+| `POST` | `/retrieve` | 법령 검색만 수행 (답변 생성 없이 문서 반환) |
 | `POST` | `/training/recommend` | 직업훈련 직접 추천 |
 | `GET` | `/docs` | Swagger UI |
 
@@ -156,6 +169,9 @@ npm run dev
 | `EMBEDDING_MODEL` | 임베딩 모델 | `text-embedding-3-small` |
 | `CHAT_MODEL` | 채팅 모델 | `gpt-4o-mini` |
 | `CHROMA_DB_PATH` | ChromaDB 경로 | `./chroma_foreign_worker_law_db` |
+| `COLLECTION_NAME` | ChromaDB 컬렉션 이름 | `foreign_worker_laws` |
+| `E9_XLSX_PATH` | E-9 외국인 근로자 수 XLSX 경로 | `data/` 내 기본 파일 |
+| `TRAINING_CSV_PATH` | 직업훈련 교육과정 CSV 경로 | `data/` 내 기본 파일 |
 
 ---
 
