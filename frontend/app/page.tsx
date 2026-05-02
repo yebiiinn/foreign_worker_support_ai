@@ -523,6 +523,7 @@ export default function HomePage() {
 
               {/* 라키 이미지 — 클릭 시 왼쪽으로 이동 */}
               <div
+                className="home-laki-img-div"
                 style={{
                   position: "absolute",
                   bottom: 0,
@@ -600,6 +601,13 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+
+              {/* 모바일 전용 탭 힌트 — 카드 열리면 숨김 */}
+              {!lakiOpen && (
+                <div className="home-laki-tap-hint">
+                  <span>{tx.lakiHint}</span>
+                </div>
+              )}
 
               {/* 오른쪽 설명 말풍선 — 클릭 후 슬라이드인 */}
               <div
