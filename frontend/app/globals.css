@@ -1463,7 +1463,7 @@ textarea {
   }
 
   .home-laki-section {
-    height: 340px !important;
+    height: 370px !important;
   }
 
   .home-laki-info-panel {
@@ -1508,7 +1508,7 @@ textarea {
   .home-laki-tap-hint {
     display: block;
     position: absolute;
-    bottom: 14px;
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     background: white;
