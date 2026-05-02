@@ -151,6 +151,143 @@ export default function LawPage() {
     fetchOptions();
   }, []);
 
+  const handleGenerateDoc = () => {
+    const now = new Date().toLocaleString(lang === "en" ? "en-US" : "ko-KR", {
+      year: "numeric", month: "long", day: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
+
+    const escHtml = (str: string) =>
+      str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br/>");
+
+    const consultationRows = history.map((msg) => {
+      const isUser = msg.role === "user";
+      return `
+        <div class="msg ${isUser ? "msg-user" : "msg-laki"}">
+          <div class="msg-role">${isUser ? tx.docRoleUser : tx.docRoleAssistant}</div>
+          <div class="msg-content">${escHtml(msg.content)}</div>
+        </div>`;
+    }).join("");
+
+    const summaryHtml = summary ? `
+      <section>
+        <h2 class="section-title">${tx.docSectionSummary}</h2>
+        <div class="summary-box">
+          <p class="summary-line">${escHtml(summary.one_liner)}</p>
+          ${summary.action_items?.length ? `
+            <h3 class="actions-title">${tx.docSectionActions}</h3>
+            <ul class="actions-list">
+              ${summary.action_items.map((item) => `<li>${escHtml(item)}</li>`).join("")}
+            </ul>` : ""}
+        </div>
+      </section>` : "";
+
+    const lawsHtml = retrievedDocs.length > 0 ? `
+      <section>
+        <h2 class="section-title">${tx.docSectionLaws}</h2>
+        ${retrievedDocs.map((doc) => `
+          <div class="law-item">
+            <div class="law-header">
+              <span class="law-badge">${escHtml(doc.law_name)}</span>
+              <span class="law-title-text">${escHtml(doc.article_no)} ${escHtml(doc.article_title)}</span>
+            </div>
+            <p class="law-text">${escHtml(doc.text)}</p>
+          </div>`).join("")}
+      </section>` : "";
+
+    const supportHtml = `
+      <section>
+        <h2 class="section-title">${tx.docSectionSupport}</h2>
+        <ul class="support-list">
+          ${tx.supportLinks.map((l) => `<li><a href="${l.href}" target="_blank">${escHtml(l.label)}</a> — ${l.href}</li>`).join("")}
+        </ul>
+      </section>`;
+
+    const html = `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>${tx.docTitle}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; font-size: 14px; color: #1e293b; background: #fff; padding: 0; }
+    .page { max-width: 780px; margin: 0 auto; padding: 48px 40px; }
+    .doc-header { display: flex; align-items: center; gap: 16px; padding-bottom: 20px; border-bottom: 2px solid #2563eb; margin-bottom: 28px; }
+    .doc-logo { font-size: 28px; font-weight: 800; color: #2563eb; letter-spacing: -1px; }
+    .doc-logo span { color: #38bdf8; }
+    .doc-header-text h1 { font-size: 20px; font-weight: 700; color: #1e293b; }
+    .doc-header-text p { font-size: 12px; color: #64748b; margin-top: 3px; }
+    .meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #f0f7ff; border-radius: 12px; padding: 16px 20px; margin-bottom: 28px; }
+    .meta-item { display: flex; gap: 8px; }
+    .meta-label { font-size: 12px; color: #64748b; font-weight: 600; min-width: 52px; }
+    .meta-value { font-size: 13px; color: #1e293b; font-weight: 500; }
+    section { margin-bottom: 28px; }
+    .section-title { font-size: 15px; font-weight: 700; color: #1e40af; padding: 8px 0 10px; border-bottom: 1px solid #bfdbfe; margin-bottom: 14px; }
+    .msg { margin-bottom: 12px; border-radius: 10px; padding: 12px 16px; line-height: 1.7; }
+    .msg-user { background: #eff6ff; border-left: 3px solid #3b82f6; }
+    .msg-laki { background: #f8fafc; border-left: 3px solid #38bdf8; }
+    .msg-role { font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .msg-content { font-size: 13.5px; color: #334155; }
+    .summary-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px; padding: 14px 18px; }
+    .summary-line { font-size: 14px; font-weight: 600; color: #166534; margin-bottom: 10px; }
+    .actions-title { font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 6px; }
+    .actions-list { padding-left: 18px; }
+    .actions-list li { font-size: 13px; color: #15803d; margin-bottom: 4px; }
+    .law-item { border: 1px solid #dbeafe; border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+    .law-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .law-badge { font-size: 11px; font-weight: 700; color: #1d4ed8; background: #dbeafe; border-radius: 6px; padding: 2px 8px; }
+    .law-title-text { font-size: 13px; font-weight: 600; color: #1e293b; }
+    .law-text { font-size: 12.5px; color: #475569; line-height: 1.65; }
+    .support-list { padding-left: 18px; }
+    .support-list li { font-size: 13px; color: #334155; margin-bottom: 6px; }
+    .support-list a { color: #2563eb; }
+    .doc-footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; line-height: 1.6; text-align: center; }
+    .print-btn { display: block; margin: 0 auto 28px; padding: 10px 32px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 0.02em; }
+    .print-btn:hover { background: #1d4ed8; }
+    @media print {
+      .print-btn { display: none !important; }
+      body { padding: 0; }
+      .page { padding: 24px 28px; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <button class="print-btn" onclick="window.print()">${tx.docPrintBtn}</button>
+    <div class="doc-header">
+      <div class="doc-logo">La<span>ki</span></div>
+      <div class="doc-header-text">
+        <h1>${tx.docTitle}</h1>
+        <p>${tx.docSubtitle}</p>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item"><span class="meta-label">${tx.docInfoDate}</span><span class="meta-value">${now}</span></div>
+      <div class="meta-item"><span class="meta-label">${tx.docInfoRegion}</span><span class="meta-value">${region}</span></div>
+      <div class="meta-item"><span class="meta-label">${tx.docInfoIndustry}</span><span class="meta-value">${industry}</span></div>
+      <div class="meta-item"><span class="meta-label">${tx.docInfoLang}</span><span class="meta-value">${language}</span></div>
+    </div>
+    <section>
+      <h2 class="section-title">${tx.docSectionConsult}</h2>
+      ${consultationRows}
+    </section>
+    ${summaryHtml}
+    ${lawsHtml}
+    ${supportHtml}
+    <div class="doc-footer">${tx.docFooter}</div>
+  </div>
+</body>
+</html>`;
+
+    const win = window.open("", "_blank");
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+    }
+  };
+
   const handleAsk = async (message: string) => {
     if (!message.trim()) return;
 
@@ -456,6 +593,39 @@ export default function LawPage() {
                       {loading ? tx.followUpLoadingBtn : tx.followUpBtn}
                     </button>
                   </div>
+                </div>
+              )}
+
+              {history.length > 0 && (
+                <div style={{ marginTop: "16px" }}>
+                  <button
+                    onClick={handleGenerateDoc}
+                    style={{
+                      width: "100%",
+                      padding: "13px 20px",
+                      background: "linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "12px",
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      letterSpacing: "0.02em",
+                      boxShadow: "0 4px 16px rgba(37, 99, 235, 0.3)",
+                      transition: "all 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 20px rgba(37, 99, 235, 0.4)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = ""; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 16px rgba(37, 99, 235, 0.3)"; }}
+                  >
+                    {tx.docExportBtn}
+                    <span style={{ fontSize: "11px", fontWeight: 500, opacity: 0.85 }}>
+                      {lang === "en" ? "· Print / Save PDF" : "· 인쇄 / PDF 저장"}
+                    </span>
+                  </button>
                 </div>
               )}
 
