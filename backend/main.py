@@ -105,7 +105,7 @@ class AskResponse(BaseModel):
 
 
 class TrainingRecommendRequest(BaseModel):
-    industry: str = Field(..., description="현재 업종")
+    industry: str = Field("", description="현재 업종 (선택)")
     keyword: str = Field(..., description="관심 키워드")
     top_k: int = Field(5, ge=1, le=10, description="반환할 추천 개수")
 
@@ -120,7 +120,7 @@ class LawChatMessageRequest(BaseModel):
 
 class TrainingChatMessageRequest(BaseModel):
     conversation_id: Optional[str] = Field(None, description="대화 세션 ID")
-    industry: str = Field(..., description="현재 업종")
+    industry: str = Field("", description="현재 업종 (선택)")
     message: str = Field(..., description="사용자 입력 메시지")
     language: str = Field("ko", description="출력 언어 코드")
     top_k: int = Field(5, ge=1, le=10, description="반환할 추천 개수")

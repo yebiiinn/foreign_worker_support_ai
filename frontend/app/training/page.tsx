@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useLang } from "../context/LanguageContext";
 import { T } from "../i18n/translations";
 
@@ -22,37 +22,11 @@ export default function TrainingPage() {
   const tx = T[lang].training;
   const txC = T[lang].common;
 
-  const [industry, setIndustry] = useState("");
-  const [industries, setIndustries] = useState<string[]>([]);
-  const [optionsLoading, setOptionsLoading] = useState(true);
   const [keyword, setKeyword] = useState("");
   const [result, setResult] = useState<TrainingRecommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [validationWarning, setValidationWarning] = useState("");
   const resultRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        setOptionsLoading(true);
-        const res = await fetch(`${BACKEND_URL}/options`);
-        const data = await res.json();
-
-        const nextIndustries = data.industries || [];
-        setIndustries(nextIndustries);
-
-        if (nextIndustries.length > 0) {
-          setIndustry(nextIndustries.includes("제조업") ? "제조업" : nextIndustries[0]);
-        }
-      } catch (e) {
-        console.error("옵션 불러오기 실패:", e);
-      } finally {
-        setOptionsLoading(false);
-      }
-    };
-
-    fetchOptions();
-  }, []);
 
   const handleSubmit = async () => {
     if (!keyword.trim()) return;
@@ -80,7 +54,6 @@ export default function TrainingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          industry,
           message: keyword,
           top_k: 5,
         }),
@@ -125,29 +98,12 @@ export default function TrainingPage() {
 
             <div className="form-grid">
               <div className="field" style={{ marginTop: 0 }}>
-                <label>{tx.industryLabel}</label>
-                <div className="select-wrap">
-                  <select
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                    disabled={optionsLoading}
-                  >
-                    {industries.map((item) => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="select-arrow">⌄</span>
-                </div>
-              </div>
-
-              <div className="field" style={{ marginTop: 0 }}>
                 <label>{tx.keywordLabel}</label>
                 <input
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   placeholder={tx.keywordPlaceholder}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !loading && keyword.trim()) handleSubmit(); }}
                 />
               </div>
             </div>
