@@ -479,6 +479,7 @@ export default function HomePage() {
             >
               {/* 위쪽 큰 말풍선 — 클릭 전에만 표시 */}
               <div
+                className="home-laki-greet-bubble"
                 style={{
                   position: "absolute",
                   top: 0,
@@ -549,6 +550,7 @@ export default function HomePage() {
 
                 {/* 작은 힌트 말풍선 — 클릭 전에만 표시 */}
                 <div
+                  className="home-laki-hint-bubble"
                   style={{
                     position: "absolute",
                     right: "-124px",
