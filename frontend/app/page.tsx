@@ -451,22 +451,24 @@ export default function HomePage() {
           </div>
 
           <h1
-            className="hero-title"
-            style={{ fontSize: "56px", fontWeight: 800, margin: "16px 0 0", textAlign: "center" }}
+            className="hero-title home-hero-title"
+            style={{ fontWeight: 800, margin: "16px 0 0", textAlign: "center" }}
           >
             {tx.title}
           </h1>
 
-          <p className="hero-desc" style={{ textAlign: "center", maxWidth: "900px", marginTop: "14px", whiteSpace: "nowrap" }}>
+          <p className="hero-desc" style={{ textAlign: "center", maxWidth: "900px", marginTop: "14px" }}>
             {tx.desc}
           </p>
 
           {heroLaki && (
             <div
+              className="home-laki-section"
               onClick={() => setLakiOpen((prev) => !prev)}
               style={{
                 position: "relative",
                 width: lakiOpen ? "860px" : lang === "en" ? "500px" : "420px",
+                maxWidth: "100%",
                 height: "390px",
                 marginTop: "18px",
                 animation: "laki-float 2.2s ease-in-out infinite",
