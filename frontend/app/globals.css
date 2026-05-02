@@ -130,9 +130,13 @@ textarea {
   min-height: 480px;
 }
 
+/* 훈련 페이지: 오른쪽(훈련 분야 선택) 이 더 넓도록 — 복합 선택자로 .top-grid 컬럼 정의 확실히 덮어씀 */
+.top-grid.top-grid-training {
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+}
+
 .top-grid-training {
   align-items: stretch;
-  grid-template-columns: 1.2fr 0.8fr;
 }
 
 .top-grid-training > .card {

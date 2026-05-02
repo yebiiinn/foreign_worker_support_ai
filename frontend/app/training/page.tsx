@@ -224,6 +224,15 @@ type RegionCourse = {
   hours: string;
 };
 
+/** 지역 패널: 훈련 시작일 기준 최신순 */
+function regionCoursesSortedByStartDesc(courses: RegionCourse[]): RegionCourse[] {
+  const startTs = (d: string) => {
+    const t = new Date((d ?? "").trim()).getTime();
+    return Number.isFinite(t) ? t : 0;
+  };
+  return [...courses].sort((a, b) => startTs(b.start_date) - startTs(a.start_date));
+}
+
 export default function TrainingPage() {
   const { lang } = useLang();
   const tx = T[lang].training;
@@ -627,7 +636,7 @@ export default function TrainingPage() {
 
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "440px", overflowY: "auto", paddingRight: "4px" }}>
                         {(() => {
-                          const courses = regionData[selectedRegion] ?? [];
+                          const courses = regionCoursesSortedByStartDesc(regionData[selectedRegion] ?? []);
                           if (courses.length === 0) {
                             return (
                               <div
