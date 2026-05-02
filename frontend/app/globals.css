@@ -1253,6 +1253,11 @@ textarea {
   50% { transform: translateX(-50%) translateY(7px); opacity: 1; }
 }
 
+/* 모바일 라키 소개 카드 — 데스크탑에서 숨김 */
+.home-laki-mobile-card {
+  display: none;
+}
+
 /* ── 서비스 카드 섹션 ── */
 
 .home-services-section {
@@ -1454,7 +1459,27 @@ textarea {
 
   .home-laki-section {
     height: 300px !important;
-    pointer-events: none;
+  }
+
+  .home-laki-info-panel {
+    display: none !important;
+  }
+
+  .home-laki-mobile-card {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+    border: 1px solid rgba(191, 219, 254, 0.95);
+    border-radius: 20px;
+    padding: 20px 18px;
+    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.1);
+    margin-top: 12px;
+    animation: laki-card-in 0.35s ease;
+  }
+
+  @keyframes laki-card-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .home-laki-greet-bubble {
@@ -1465,6 +1490,10 @@ textarea {
 
   .home-laki-hint-bubble {
     display: none !important;
+  }
+
+  .home-laki-section {
+    cursor: pointer;
   }
 
   .home-services-section {

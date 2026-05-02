@@ -603,6 +603,7 @@ export default function HomePage() {
 
               {/* 오른쪽 설명 말풍선 — 클릭 후 슬라이드인 */}
               <div
+                className="home-laki-info-panel"
                 style={{
                   position: "absolute",
                   bottom: "18px",
@@ -696,6 +697,47 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* 모바일 전용 라키 소개 카드 — 라키 탭 후 아래에 표시 */}
+          {heroLaki && lakiOpen && (
+            <div className="home-laki-mobile-card">
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: "10px" }}>
+                <p style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: 800, color: "#1e40af" }}>
+                  {tx.lakiInfoTitle}
+                </p>
+                <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#2563eb", letterSpacing: "0.08em" }}>
+                  {tx.lakiInfoSub}
+                </p>
+              </div>
+              <p style={{ margin: "0 0 12px", fontSize: "13.5px", color: "#475569", lineHeight: 1.65, textAlign: "center" }}>
+                {tx.lakiInfoDesc.split("\n").map((line, i) => (
+                  <span key={i}>{line}{i === 0 && <br />}</span>
+                ))}
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "14px", justifyContent: "center" }}>
+                {["한국어", "English", "Tiếng Việt", "中文", "ภาษาไทย", "O'zbekcha"].map((l) => (
+                  <span key={l} style={{ fontSize: "11px", fontWeight: 600, color: "#2563eb", background: "rgba(219,234,254,0.7)", border: "1px solid rgba(147,197,253,0.6)", borderRadius: "20px", padding: "2px 9px" }}>
+                    {l}
+                  </span>
+                ))}
+              </div>
+              <div style={{ borderTop: "1px solid rgba(191,219,254,0.6)", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                {[
+                  [tx.lawTag, tx.lawCardDesc],
+                  [tx.trainingTag, tx.trainingCardDesc],
+                  [tx.mindTag, tx.mindCardDesc],
+                ].map(([title, desc]) => (
+                  <div key={title} style={{ background: "rgba(239,246,255,0.7)", border: "1px solid rgba(191,219,254,0.5)", borderRadius: "12px", padding: "10px 14px", textAlign: "left" }}>
+                    <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: 700, color: "#1e40af" }}>{title}</p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#475569", lineHeight: 1.55 }}>{desc}</p>
+                  </div>
+                ))}
+              </div>
+              <p style={{ margin: "10px 0 0", fontSize: "11px", color: "#94a3b8", textAlign: "right" }}>
+                {tx.closeHint}
+              </p>
             </div>
           )}
           </div>{/* 페이드 영역 끝 */}
