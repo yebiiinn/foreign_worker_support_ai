@@ -1219,6 +1219,8 @@ textarea {
   text-align: center;
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 960px;
 }
 
 .home-scroll-hint {
@@ -1438,8 +1440,21 @@ textarea {
     padding: 0 4px;
   }
 
+  .home-hero-content {
+    max-width: 100%;
+    padding: 0 4px;
+  }
+
+  .home-hero-title {
+    font-size: 30px !important;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    width: 100%;
+  }
+
   .home-laki-section {
     height: 300px !important;
+    pointer-events: none;
   }
 
   .home-laki-greet-bubble {
