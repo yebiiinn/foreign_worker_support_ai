@@ -531,7 +531,7 @@ export default function TrainingPage() {
                 <p style={{ fontSize: "15px" }}>{lang === "en" ? "Loading map data..." : "지역 데이터를 불러오는 중..."}</p>
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px", alignItems: "start" }}>
+              <div className="training-map-split">
 
                 {/* 지도 */}
                 <div>

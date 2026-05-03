@@ -144,6 +144,14 @@ textarea {
   min-height: 520px;
 }
 
+/* 지역별 찾기: 지도 | 사이드 패널 (모바일에서 training-map-split로 1열) */
+.training-map-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
 .bottom-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -659,7 +667,14 @@ textarea {
 @media (max-width: 960px) {
   .top-grid,
   .top-grid-training,
+  /* `.top-grid.top-grid-training` 단독 규칙이 (0,2,0)라서 여기 없으면 모바일에서도 2열 유지됨 */
+  .top-grid.top-grid-training,
   .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 직업훈련 지도 + 지역 패널: 좌우 → 세로 (지도 위, 안내/목록 아래) */
+  .training-map-split {
     grid-template-columns: 1fr;
   }
 
