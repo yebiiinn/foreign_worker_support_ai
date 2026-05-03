@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "외국인근로자 법률 상담 서비스",
-  description: "법령 기반 RAG 상담 웹서비스",
+  title: "LAKI — 외국인 근로자 통합 지원 AI 서비스",
+  description:
+    "법률 안내, 직업훈련 추천, 마음 챙기기까지 — 한국에서 일하는 외국인 근로자를 위한 AI 통합 지원",
 };
 
 export default function RootLayout({

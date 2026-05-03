@@ -11,7 +11,7 @@ export const T = {
     // ── 메인 페이지 ──
     home: {
       badge: "외국인 근로자 지원 서비스",
-      title: "외국인 고용·근로 통합 AI 서비스",
+      title: "외국인 근로자 통합 지원 AI 서비스",
       desc: "법률 상담부터 직업훈련 추천, 마음 챙기기까지 — 외국인 근로자의 한국 생활 전반을 함께합니다.",
       scrollHint: "서비스 보기",
       lakiGreet1: "한국에서 일하고 생활하는 모든 순간,",
@@ -260,7 +260,7 @@ export const T = {
     // ── Main Page ──
     home: {
       badge: "Foreign Worker Support Service",
-      title: "Integrated AI Service for Foreign Workers",
+      title: "Integrated AI Support Service for Foreign Workers",
       desc: "From legal consultation to vocational training and mindfulness — we support every aspect of your life in Korea.",
       scrollHint: "View Services",
       lakiGreet1: "For every moment of working and living in Korea,",
