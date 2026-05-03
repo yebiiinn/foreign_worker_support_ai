@@ -476,6 +476,37 @@ def get_language_instruction(language: str) -> str:
 
     return mapping.get(lang, "한국어")
 
+
+def build_final_answer_format_instruction(language: str) -> str:
+    """final_answer 섹션 제목·본문 언어: ko는 한국어 고정, 그 외는 모두 target_language."""
+    target_language = get_language_instruction(language)
+    lang = (language or "ko").lower().strip()
+    common_tail = (
+        "- 각 항목은 내용이 있을 때만 포함하고, 내용이 없으면 해당 항목은 생략하세요."
+    )
+
+    if lang == "ko":
+        return f"""
+답변 형식 안내 (모든 항목 제목과 본문은 한국어로 작성):
+- 긴급 상황이면: 지금 당장 할 수 있는 행동 → 핵심 안내 → 관련 법 조문 → 주의사항
+- 일반 질문이면: 핵심 안내 → 관련 법 조문 → 사용자가 바로 할 수 있는 행동 → 주의사항
+- 간단한 질문이면: 핵심 안내 → 관련 법 조문 (불필요한 항목은 생략 가능)
+{common_tail}
+""".strip()
+
+    return f"""
+답변 형식 안내:
+- final_answer의 모든 섹션 제목과 본문을 반드시 {target_language}로만 작성하세요.
+- 한국어 제목(예: 핵심 안내, 관련 법 조문, 사용자가 바로 할 수 있는 행동)은 사용하지 마세요.
+- 긴급 상황이면 순서: Immediate actions you can take → Key guidance → Relevant legal provisions → Important notes
+  (위 순서의 의미에 맞는 자연스러운 섹션 제목을 {target_language}로 작성)
+- 일반 질문이면 순서: Key guidance → Relevant legal provisions → Actions you can take right away → Important notes
+  (제목은 모두 {target_language})
+- 간단한 질문이면: Key guidance → Relevant legal provisions (불필요한 항목 생략, 제목은 {target_language})
+{common_tail}
+""".strip()
+
+
 def build_index_text(doc: Dict[str, Any]) -> str:
     return "\n".join(
         [
@@ -816,7 +847,8 @@ def build_grounded_answer_prompt(
         emergency_instruction = f"""
 [긴급 상황 감지]
 이 질문은 긴급한 상황을 포함합니다.
-final_answer의 가장 첫 번째 항목으로 반드시 "지금 당장 할 수 있는 행동"을 {target_language}로 작성하고,
+final_answer의 가장 첫 번째 섹션은 반드시 사용자가 지금 당장 취할 수 있는 구체적 조치와 연락처 안내여야 하며,
+섹션 제목과 본문을 모두 {target_language}로 작성하세요.
 고용노동부 1350 또는 관련 긴급 연락처를 포함하세요.
 """.strip()
 
@@ -828,14 +860,7 @@ final_answer의 가장 첫 번째 항목으로 반드시 "지금 당장 할 수 
 final_answer 시작에 "{target_language}로 '관련 법령을 정확히 찾지 못했을 수 있어 참고용으로만 활용하세요'라는 안내를 추가하세요.
 """.strip()
 
-    format_instruction = f"""
-답변 형식 안내 ({target_language}로 작성):
-- 긴급 상황이면: 지금 당장 할 수 있는 행동 → 핵심 안내 → 관련 법 조문 → 주의사항
-- 일반 질문이면: 핵심 안내 → 관련 법 조문 → 사용자가 바로 할 수 있는 행동 → 주의사항
-- 간단한 질문이면: 핵심 안내 → 관련 법 조문 (불필요한 항목은 생략 가능)
-- 각 항목은 내용이 있을 때만 포함하고, 내용이 없으면 해당 항목은 생략하세요.
-- 항목 제목은 한국어로 유지, 내용은 {target_language}로 작성하세요.
-""".strip()
+    format_instruction = build_final_answer_format_instruction(language)
 
     return f"""
 당신은 외국인근로자를 위한 노동법 안내 AI입니다.
