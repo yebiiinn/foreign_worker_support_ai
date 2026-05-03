@@ -102,8 +102,8 @@ export const T = {
         },
       ],
       supportLinks: [
-        { label: "고용노동부 고객상담센터 1350", href: "https://1350.moel.go.kr/home/" },
-        { label: "외국인근로자지원센터 안내", href: "https://www.moel.go.kr/policy/policyinfo/foreigner/list.do" },
+        { label: "고용노동부 고객상담센터 1350", href: "https://1350.moel.go.kr/" },
+        { label: "외국인근로자지원센터 안내", href: "https://www.gov.kr/portal/foreigner/ko/m020401" },
         { label: "마이그레이션 포털(HiKorea)", href: "https://www.hikorea.go.kr/" },
       ],
       resetBtn: "초기화",
@@ -127,9 +127,9 @@ export const T = {
       apiCallError: "법률 상담 요청 중 오류가 발생했습니다.",
       reportLinksTitle: "📌 바로 신고·상담하기",
       reportLinks: [
-        { label: "고용노동부 1350", href: "https://www.moel.go.kr/1350/" },
-        { label: "온라인 민원 신고", href: "https://minwon.moel.go.kr/" },
-        { label: "외국인근로자지원센터", href: "https://www.moel.go.kr/policy/policyinfo/foreigner/list.do" },
+        { label: "고용노동부 1350", href: "https://1350.moel.go.kr/" },
+        { label: "온라인 민원 신고", href: "https://labor.moel.go.kr/minwonApply/minwonApply.do" },
+        { label: "외국인근로자지원센터", href: "https://www.gov.kr/portal/foreigner/ko/m020401" },
         { label: "체류자격 안내 (HiKorea)", href: "https://www.hikorea.go.kr/" },
       ],
       reportSteps: [
@@ -351,8 +351,8 @@ export const T = {
         },
       ],
       supportLinks: [
-        { label: "Ministry of Employment & Labor 1350", href: "https://1350.moel.go.kr/home/" },
-        { label: "Foreign Worker Support Center", href: "https://www.moel.go.kr/policy/policyinfo/foreigner/list.do" },
+        { label: "Ministry of Employment & Labor 1350", href: "https://1350.moel.go.kr/" },
+        { label: "Foreign Worker Support (Gov.kr)", href: "https://www.gov.kr/portal/foreigner/en/m020401" },
         { label: "HiKorea Migration Portal", href: "https://www.hikorea.go.kr/" },
       ],
       resetBtn: "Reset",
@@ -376,9 +376,9 @@ export const T = {
       apiCallError: "An error occurred during legal consultation.",
       reportLinksTitle: "📌 Report / Consult Now",
       reportLinks: [
-        { label: "Ministry of Employment & Labor 1350", href: "https://www.moel.go.kr/1350/" },
-        { label: "Online Civil Report", href: "https://minwon.moel.go.kr/" },
-        { label: "Foreign Worker Support Center", href: "https://www.moel.go.kr/policy/policyinfo/foreigner/list.do" },
+        { label: "Ministry of Employment & Labor 1350", href: "https://1350.moel.go.kr/" },
+        { label: "Online Labor Petition (Labor Portal)", href: "https://labor.moel.go.kr/minwonApply/minwonApply.do" },
+        { label: "Foreign Worker Support (Gov.kr)", href: "https://www.gov.kr/portal/foreigner/en/m020401" },
         { label: "Residency Guide (HiKorea)", href: "https://www.hikorea.go.kr/" },
       ],
       reportSteps: [

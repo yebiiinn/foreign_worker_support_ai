@@ -72,8 +72,8 @@ const EMERGENCY_SCENARIOS = [
 ];
 
 const SUPPORT_LINKS = [
-  { label: "고용노동부 고객상담센터 1350", href: "https://1350.moel.go.kr/home/" },
-  { label: "외국인근로자지원센터 안내", href: "https://www.moel.go.kr/policy/policyinfo/foreigner/list.do" },
+  { label: "고용노동부 고객상담센터 1350", href: "https://1350.moel.go.kr/" },
+  { label: "외국인근로자지원센터 안내", href: "https://www.gov.kr/portal/foreigner/ko/m020401" },
   { label: "마이그레이션 포털(HiKorea)", href: "https://www.hikorea.go.kr/" },
 ];
 
